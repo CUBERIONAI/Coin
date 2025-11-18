@@ -9,11 +9,11 @@
     <style>
         /* --- CSS Стилі --- */
         :root {
-            --primary: #00BFFF;    /* Блакитний */
-            --accent: #FFD700;     /* Жовтий */
-            --bg-dark: #0d1b2a;    /* Темний фон */
-            --card-bg: #1b263b;    /* Фон карток */
-            --text-grey: #888;
+            --primary: #00BFFF;
+            --accent: #FFD700;
+            --bg-dark: #0d1b2a;
+            --card-bg: #1b263b;
+            --danger: #ff4444;
         }
 
         body {
@@ -28,10 +28,9 @@
             overflow-x: hidden;
             user-select: none;
             -webkit-user-select: none;
-            padding-bottom: 90px; /* Місце під меню */
+            padding-bottom: 100px;
         }
 
-        /* Фон */
         .background-animation {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -39,256 +38,76 @@
             z-index: -1;
         }
 
-        /* Контейнер */
-        .container {
-            width: 100%;
-            max-width: 420px;
-            padding: 15px;
-            box-sizing: border-box;
-            text-align: center;
-        }
+        .container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; text-align: center; }
 
-        h1 {
-            color: var(--accent);
-            font-size: 22px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 10px;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        /* Header Stats */
+        .emission-bar {
+            width: 100%; height: 4px; background: #333; margin-top: 5px; border-radius: 2px;
         }
+        .emission-fill {
+            height: 100%; background: var(--accent); width: 0%; transition: width 0.5s;
+        }
+        .emission-text { font-size: 10px; color: #666; margin-bottom: 10px; }
 
-        /* Баланс */
-        .balance-container {
-            margin: 20px 0;
-        }
-        .balance-amount {
-            font-size: 42px;
-            font-weight: 800;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-        .ucbg-icon {
-            width: 38px;
-            height: 38px;
-            /* Тризуб SVG */
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFD700"><path d="M12 2L10 6H4l4 4-2 4 6 2 6-2-2-4 4-4H14l-2-4z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: center;
-            filter: drop-shadow(0 0 5px var(--accent));
-        }
+        /* Balance */
+        .balance-amount { font-size: 40px; font-weight: 800; color: #fff; margin: 10px 0; }
+        .real-token-est { font-size: 12px; color: var(--primary); margin-bottom: 20px; }
 
-        /* Ліга */
-        .league-badge {
-            display: inline-block;
-            font-size: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 5px 15px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-            color: var(--primary);
-            cursor: pointer;
-        }
-
-        /* Головна Кнопка */
-        .clicker-area {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-            position: relative;
-        }
+        /* Main Button */
         .main-circle {
-            width: 260px;
-            height: 260px;
-            border-radius: 50%;
+            width: 260px; height: 260px; border-radius: 50%;
             background: radial-gradient(circle, #005a8d, #0d1b2a);
-            box-shadow: 0 0 40px rgba(0, 191, 255, 0.2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
             border: 5px solid #3a3a60;
+            display: flex; justify-content: center; align-items: center;
+            margin: 0 auto; position: relative; cursor: pointer; overflow: hidden;
             transition: transform 0.05s;
-            position: relative;
-            overflow: hidden;
             -webkit-tap-highlight-color: transparent;
         }
         .main-circle:active { transform: scale(0.96); }
-        .main-circle img { width: 85%; height: 85%; object-fit: contain; pointer-events: none; }
+        .main-circle img { width: 85%; pointer-events: none; }
 
-        /* Статистика Енергії */
-        .energy-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: #fff;
-            margin-top: 10px;
-            padding: 0 20px;
+        /* Rocket Effect */
+        .rocket-mode { border-color: var(--danger); box-shadow: 0 0 30px var(--danger); }
+
+        /* Auto Bot Status */
+        .bot-status {
+            background: rgba(0, 191, 255, 0.1); border: 1px solid var(--primary);
+            border-radius: 10px; padding: 10px; margin: 20px 0; font-size: 13px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .energy-icon { margin-right: 5px; color: var(--accent); }
 
-        /* Нижнє Меню */
+        /* Bottom Nav */
         .bottom-nav {
-            position: fixed;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 400px;
-            background: rgba(27, 38, 59, 0.9);
-            backdrop-filter: blur(15px);
-            border-radius: 25px;
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-            border: 1px solid rgba(255,255,255,0.1);
-            z-index: 99;
-            box-sizing: border-box;
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 400px; background: rgba(27, 38, 59, 0.95);
+            backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-around; padding: 10px; z-index: 99;
         }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #666;
-            font-size: 11px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .nav-item.active { color: var(--accent); transform: translateY(-2px); }
-        .nav-icon { font-size: 22px; margin-bottom: 4px; }
+        .nav-item { background: none; border: none; color: #666; font-size: 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        .nav-item.active { color: var(--accent); }
+        .nav-icon { font-size: 20px; margin-bottom: 3px; }
 
-        /* Модальні вікна */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.85);
-            z-index: 1000;
-            justify-content: center;
-            align-items: flex-end;
-        }
-        .modal-content {
-            background-color: var(--card-bg);
-            width: 100%;
-            max-width: 500px;
-            border-radius: 25px 25px 0 0;
-            padding: 25px;
-            box-sizing: border-box;
-            animation: slideUp 0.3s ease-out;
-            max-height: 85vh;
-            overflow-y: auto;
-            color: #fff;
-            position: relative;
-            border-top: 2px solid var(--primary);
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        /* Modals */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: flex-end; }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 25px; max-height: 85vh; overflow-y: auto; color: #fff; border-top: 2px solid var(--primary); position: relative;}
+        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 24px; color: #aaa; cursor: pointer; }
+
+        /* Buttons */
+        .action-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-primary { background: var(--primary); color: #000; }
+        .btn-disabled { background: #444; color: #888; cursor: not-allowed; }
+        .btn-getgems { background: linear-gradient(90deg, #007aff, #00c6ff); color: white; text-decoration: none; display: block; text-align: center; margin-top: 10px; border-radius: 10px; padding: 12px; font-weight: bold;}
+
+        /* List Items */
+        .list-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         
-        .close-btn {
-            position: absolute; top: 20px; right: 20px;
-            font-size: 28px; color: #aaa; cursor: pointer;
-            line-height: 20px;
-        }
-        
-        /* Списки */
-        .list-item {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .item-left { display: flex; align-items: center; gap: 15px; }
-        .item-icon { font-size: 24px; }
-        .item-details h4 { margin: 0; font-size: 15px; color: #fff; }
-        .item-details p { margin: 5px 0 0; font-size: 12px; color: var(--text-grey); }
-        
-        .upgrade-btn {
-            background: var(--primary);
-            color: #000;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            min-width: 80px;
-        }
-        .upgrade-btn:active { transform: scale(0.95); }
-        .upgrade-btn:disabled { background: #444; color: #888; cursor: not-allowed; }
+        /* Floating Text */
+        .floating-text { position: absolute; color: var(--accent); font-weight: bold; font-size: 24px; pointer-events: none; animation: floatUp 0.8s forwards; }
+        @keyframes floatUp { to { transform: translateY(-100px); opacity: 0; } }
 
-        /* Гаманець та інфо */
-        .copy-box {
-            background: rgba(0,0,0,0.4);
-            padding: 12px;
-            border-radius: 10px;
-            font-family: monospace;
-            font-size: 12px;
-            margin-top: 5px;
-            border: 1px solid #333;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .copy-icon { cursor: pointer; font-size: 16px; }
-
-        /* Кнопка GetGems */
-        .getgems-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(90deg, #007aff, #00c6ff);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            margin-top: 15px;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        /* Ефекти кліку */
-        .floating-text {
-            position: absolute;
-            color: var(--accent);
-            font-weight: 900;
-            font-size: 28px;
-            pointer-events: none;
-            animation: floatUp 0.8s ease-out forwards;
-            z-index: 200;
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-120px) scale(1.2); opacity: 0; }
-        }
-
-        /* Turbo Mode */
-        .turbo-active {
-            box-shadow: 0 0 50px #FF4500 !important;
-            border-color: #FF4500 !important;
-        }
-        .turbo-timer {
-            position: absolute;
-            top: 60px; right: 20px;
-            background: #FF4500;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            display: none;
-        }
+        /* Explode Effect */
+        @keyframes explode { 0% { transform: scale(1); } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(2); opacity: 0; } }
+        .exploded { animation: explode 1s forwards; pointer-events: none; }
 
     </style>
 </head>
@@ -297,214 +116,317 @@
     <div class="background-animation"></div>
 
     <div class="container">
-        <h1>Ukrainian Cyborgs</h1>
-        <div class="league-badge" onclick="openModal('leagueModal')" id="currentLeague">
-            🎖️ Новобранець >
+        <h3 style="color: var(--accent); margin: 5px;">UKRAINIAN CYBORGS</h3>
+        
+        <div class="emission-text">Видобуто: <span id="emissionVal">0</span>% (Global)</div>
+        <div class="emission-bar"><div class="emission-fill" id="emissionBar"></div></div>
+
+        <div class="balance-amount"><span id="balance">0</span></div>
+        <div class="real-token-est">≈ <span id="realTokenVal">0</span> UCBG (Real)</div>
+
+        <div class="bot-status" id="botPanel" style="display:none;">
+            <div>🤖 Авто-Бот: <span id="botTimer">04:00:00</span></div>
+            <button class="action-btn btn-primary" style="width: auto; padding: 5px 15px; font-size: 12px;" id="claimBotBtn" onclick="claimBot()">Забрати</button>
         </div>
 
-        <div class="balance-container">
-            <div class="balance-amount">
-                <div class="ucbg-icon"></div>
-                <span id="balance">0</span>
-            </div>
-            <div style="font-size: 12px; color: #888;">UCBG COIN</div>
+        <div class="main-circle" id="tapButton">
+            <img src="https://via.placeholder.com/250/0d1b2a/FFFFFF?text=CYBORG" alt="Cyborg">
         </div>
 
-        <div id="turboTimer" class="turbo-timer">🔥 TURBO: 10s</div>
-
-        <div class="clicker-area">
-            <div class="main-circle" id="tapButton">
-                <img src="https://via.placeholder.com/250/0d1b2a/FFFFFF?text=CYBORG" alt="Cyborg" id="mainImage">
-            </div>
-        </div>
-
-        <div class="energy-bar">
-            <div><span class="energy-icon">⚡</span> <span id="energyVal">1000</span> / <span id="maxEnergyVal">1000</span></div>
-            <div>Множник: x<span id="tapMultiplier">1</span></div>
-        </div>
+        <div style="margin-top: 20px; font-size: 14px; color: #888;">⚡ <span id="energy">1000</span>/1000</div>
     </div>
 
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="openTab('home')">
-            <div class="nav-icon">🏠</div>
-            <span>Головна</span>
+        <button class="nav-item active" onclick="closeModals()">
+            <div class="nav-icon">🏠</div><span>Головна</span>
         </button>
-        <button class="nav-item" onclick="openModal('upgradeModal')">
-            <div class="nav-icon">🚀</div>
-            <span>Прокачка</span>
+        <button class="nav-item" onclick="openModal('boostModal')">
+            <div class="nav-icon">🚀</div><span>Бусти</span>
         </button>
         <button class="nav-item" onclick="openModal('friendsModal')">
-            <div class="nav-icon">👥</div>
-            <span>Бригада</span>
+            <div class="nav-icon">🏦</div><span>Банк</span>
         </button>
         <button class="nav-item" onclick="openModal('walletModal')">
-            <div class="nav-icon">💎</div>
-            <span>Гаманець</span>
+            <div class="nav-icon">💎</div><span>Вивід</span>
         </button>
     </div>
 
-    <div id="upgradeModal" class="modal">
+    <div id="boostModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('upgradeModal')">&times;</span>
-            <h2>🛠 Арсенал (Прокачка)</h2>
+            <span class="close-btn" onclick="closeModals()">&times;</span>
+            <h2>🚀 Центр Покращень</h2>
             
-            <h3 style="font-size: 16px; color: var(--accent); margin-top: 20px;">⚡ Бусти</h3>
-            <div class="list-item" style="border-color: var(--accent);">
-                <div class="item-left">
-                    <div class="item-icon">🔥</div>
-                    <div class="item-details">
-                        <h4>Turbo Mode (x2)</h4>
-                        <p>Помножує тапи на 2 (10 сек)</p>
-                    </div>
+            <div class="list-item">
+                <div>
+                    <h4>🚀 Ракетка (x5 Клік)</h4>
+                    <p style="font-size: 11px; color: #aaa;">Діє 10 секунд</p>
                 </div>
-                <button class="upgrade-btn" onclick="activateTurbo()" style="background: #FF4500; color: #fff;">
-                    Start
-                </button>
+                <button class="action-btn btn-primary" style="width: 80px;" onclick="activateRocket()">Start</button>
             </div>
 
-            <h3 style="font-size: 16px; color: var(--primary); margin-top: 20px;">⚙️ Базові</h3>
-            <div id="upgradesList">
+            <div class="list-item">
+                <div>
+                    <h4>🤖 Авто-Бот 4h</h4>
+                    <p style="font-size: 11px; color: #aaa;">Збирає поки ти спиш (4 год)</p>
                 </div>
+                <button class="action-btn btn-primary" style="width: 80px;" id="buyBotBtn" onclick="buyBot()">50k</button>
+            </div>
+
+            <div class="list-item">
+                <div><h4>⚡ Енергія (+500)</h4></div>
+                <button class="action-btn btn-primary" style="width: 80px;" onclick="upgradeEnergy()">5k</button>
+            </div>
         </div>
     </div>
 
     <div id="friendsModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('friendsModal')">&times;</span>
-            <h2>🤝 Призовний Пункт</h2>
-            <p style="text-align: center; color: #ccc; font-size: 13px;">
-                Запрошуй друзів у бот <b>@ucbgcoin_bot</b> та отримуй бонуси!
-            </p>
+            <span class="close-btn" onclick="closeModals()">&times;</span>
+            <h2>🏦 Банківська Філія</h2>
+            <p style="text-align: center; color: #aaa; font-size: 12px;">Запрошуй партнерів та отримуй дивіденди</p>
 
-            <div style="background: #222; border-radius: 15px; padding: 20px; text-align: center; margin: 20px 0;">
-                <div style="font-size: 24px;">🎁</div>
-                <h3 style="margin: 10px 0; color: var(--accent);">Бонуси за друга</h3>
-                <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 15px;">
-                    <span>Звичайний</span>
-                    <span style="color: var(--accent);">+5,000 UCBG</span>
+            <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                <div class="list-item" style="background: none; margin: 0; padding: 5px;">
+                    <span>👤 Звичайний</span>
+                    <span style="color: var(--accent);">+2,500 UCBG</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                    <span style="color: #00BFFF;">Telegram Premium</span>
-                    <span style="color: var(--accent);">+50,000 UCBG</span>
+                <div class="list-item" style="background: none; margin: 0; padding: 5px;">
+                    <span>🌟 Premium</span>
+                    <span style="color: var(--accent);">+25,000 UCBG</span>
                 </div>
             </div>
 
-            <button class="getgems-btn" onclick="inviteFriend()">🔗 Запросити друга</button>
+            <button class="action-btn btn-primary" onclick="inviteFriend()">🔗 Створити Реф. Посилання</button>
         </div>
     </div>
 
     <div id="walletModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('walletModal')">&times;</span>
-            <h2>💎 Гаманець (Штаб)</h2>
+            <span class="close-btn" onclick="closeModals()">&times;</span>
+            <h2>💎 Генерація & Вивід</h2>
             
-            <div id="ton-connect-button" style="width: 100%; margin-bottom: 20px; display: flex; justify-content: center;"></div>
+            <div id="ton-connect-button" style="width: 100%; display: flex; justify-content: center; margin-bottom: 20px;"></div>
 
-            <p style="color: #aaa; font-size: 12px; margin-bottom: 5px;">Контракт токена (UCBG):</p>
-            <div class="copy-box" onclick="copyToClipboard('EQDEKujB04BTPGTxzrLyMwnj8JJjcKL9fAHxFjUZELytL--g')">
-                <span>EQDEK...tL--g</span>
-                <span class="copy-icon">📋</span>
+            <p style="font-size: 12px; color: #aaa;">Офіційна колекція:</p>
+            <a href="https://getgems.io/ucbgcoin" target="_blank" class="btn-getgems">📂 Відкрити Getgems Колекцію</a>
+            
+            <p style="font-size: 12px; color: #aaa; margin-top: 15px;">Приклад NFT (Сховище):</p>
+            <a href="https://getgems.io/collection/EQBiMglpS3o2nMB89NS0Wp6wgqacaOhT0QdZgQ_svTlhTdsO/EQBnuEpHT79-cv1fXDk9chLlw8IvXWVUW_Oq5K9lDRYqFUa2" target="_blank" style="color: var(--primary); font-size: 12px;">🔗 Переглянути NFT</a>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <div style="text-align: center;">
+                <h3 style="color: var(--accent);">ГЕНЕРАЦІЯ UCBG</h3>
+                <p style="font-size: 11px; color: #aaa;">
+                    Необхідно 10 млн ігрових монет для 1 NFT (10,000 UCBG Real).
+                    <br>Вивід доступний: NFT, Wallet, DEX.
+                </p>
+                
+                <div id="withdrawLock" style="margin-top: 15px;">
+                    <div style="font-size: 20px;">🔒</div>
+                    <p id="timerText" style="color: var(--danger); font-size: 12px;">Відкриється 5 лютого 2026</p>
+                    <button class="action-btn btn-disabled" id="genButton" disabled>ГЕНЕРУВАТИ</button>
+                </div>
             </div>
-
-            <p style="color: #aaa; font-size: 12px; margin-bottom: 5px; margin-top: 15px;">Адреса проекту:</p>
-            <div class="copy-box" onclick="copyToClipboard('UQCT58CCHhHD9EuKlAVaZYlICdnbRdrhtWaVzl_CBqoZHEUP')">
-                <span>UQCT5...ZHEUP</span>
-                <span class="copy-icon">📋</span>
-            </div>
-
-            <a href="https://getgems.io/collection/ucgbcoin" target="_blank" class="getgems-btn" style="background: #000; border: 1px solid #333;">
-                💎 Відкрити NFT на GetGems (@ucgbcoin)
-            </a>
-        </div>
-    </div>
-
-    <div id="leagueModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('leagueModal')">&times;</span>
-            <h2>🏆 Система Звань</h2>
-            <div id="leaguesList"></div>
         </div>
     </div>
 
     <script>
-        // --- 1. CONFIG & STATE ---
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.setHeaderColor('#0d1b2a'); // Колір шапки
+        // --- КОНФІГУРАЦІЯ ---
+        const TG = window.Telegram.WebApp;
+        TG.expand();
 
-        // Стан гри
+        // Дедлайни
+        const START_DATE = new Date('2025-12-01T00:00:00'); // Старт гри
+        const UNLOCK_DATE = new Date('2026-02-05T00:00:00'); // Відкриття виводу
+        
+        // Економіка
+        const MAX_GAME_EMISSION = 2000000000000; // 2 Трильйони ігрових
+        const REAL_TOKEN_RATIO = 1000; // 1000 ігрових = 1 Real UCBG
+        // (10 млн ігрових / 1000 = 10,000 Real UCBG = 1 NFT)
+
+        // Стан гравця
         let state = {
             balance: 0,
             energy: 1000,
-            totalMined: 0,
-            turboEndTime: 0,
-            lastExitTime: Date.now(),
-            upgrades: {
-                multitap: { level: 1, baseCost: 500, costFactor: 2, name: "Multitap", desc: "+1 до кліку" },
-                limit: { level: 1, baseCost: 500, costFactor: 2, name: "Energy Limit", desc: "+500 енергії" },
-                recharge: { level: 1, baseCost: 1000, costFactor: 2.5, name: "Recharge Speed", desc: "Швидше відновлення" }
-            }
+            maxEnergy: 1000,
+            hasBot: false,
+            botStartTime: 0,
+            lastClickTime: 0,
+            clickCount: 0 // Для анти-чіта
         };
 
-        // Ліги
-        const leagues = [
-            { name: "Новобранець", min: 0 },
-            { name: "Солдат", min: 25000 },
-            { name: "Сержант", min: 100000 },
-            { name: "Офіцер", min: 500000 },
-            { name: "Генерал", min: 2000000 },
-            { name: "КІБОРГ", min: 10000000 }
-        ];
+        // --- ЛОГІКА ---
 
-        // --- 2. LOGIC ---
+        function init() {
+            loadState();
+            updateUI();
+            checkWithdrawalDate();
+            
+            // Таймери
+            setInterval(updateEnergy, 1000);
+            setInterval(updateBotTimer, 1000);
+            setInterval(checkAntiCheat, 2000); // Перевірка кожні 2 сек
+        }
 
-        function getTapPower() {
-            // База 1 + (рівень - 1)
-            let power = 1 + (state.upgrades.multitap.level - 1);
-            // Турбо режим
-            if (Date.now() < state.turboEndTime) {
-                power *= 2; 
+        // Клік
+        document.getElementById('tapButton').addEventListener('click', (e) => {
+            // Перевірка емісії
+            if (state.balance >= MAX_GAME_EMISSION) {
+                endGame();
+                return;
             }
-            return power;
-        }
 
-        function getMaxEnergy() {
-            return 1000 + ((state.upgrades.limit.level - 1) * 500);
-        }
+            // Розрахунок сили
+            let power = 1;
+            const isRocket = document.getElementById('tapButton').classList.contains('rocket-mode');
+            if (isRocket) power *= 5;
 
-        function getRechargeRate() {
-            return 1 + (state.upgrades.recharge.level - 1); // +1 енергії за тик за рівень
-        }
-
-        // Клік по кнопці
-        document.getElementById('tapButton').addEventListener('touchstart', handleTap, {passive: false});
-        document.getElementById('tapButton').addEventListener('click', handleTap);
-
-        function handleTap(e) {
-            if(e.type === 'touchstart') e.preventDefault(); // Прибрати зум на мобільному
-
-            const power = getTapPower();
             if (state.energy >= power) {
                 state.balance += power;
-                state.totalMined += power;
                 state.energy -= power;
+                state.clickCount++; // Лічильник для анти-чіта
 
-                // Вібрація
-                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-
-                // Анімація цифр
-                let x, y;
-                if (e.touches && e.touches[0]) {
-                    x = e.touches[0].clientX;
-                    y = e.touches[0].clientY;
-                } else {
-                    x = e.clientX;
-                    y = e.clientY;
-                }
+                // Візуали
+                const rect = e.target.getBoundingClientRect();
+                const x = e.clientX || (rect.left + rect.width/2);
+                const y = e.clientY || (rect.top + rect.height/2);
                 showFloatingText(x, y, `+${power}`);
-
+                
+                if (TG.HapticFeedback) TG.HapticFeedback.impactOccurred('light');
+                
                 updateUI();
-                saveData();
+                saveState();
+            }
+        });
+
+        // Анти-Чіт (Простий)
+        function checkAntiCheat() {
+            // Якщо більше 30 кліків за 2 секунди - підозріло (15 кліків/сек)
+            if (state.clickCount > 30) {
+                state.balance = 0; // Обнулення
+                TG.showAlert("👮 Виявлено підозрілу активність! Баланс анульовано. Грай чесно.");
+            }
+            state.clickCount = 0; // Скидання лічильника
+        }
+
+        // Авто-Бот
+        function buyBot() {
+            if (state.balance >= 50000 && !state.hasBot) {
+                state.balance -= 50000;
+                state.hasBot = true;
+                state.botStartTime = Date.now();
+                document.getElementById('botPanel').style.display = 'flex';
+                document.getElementById('buyBotBtn').textContent = 'Куплено';
+                document.getElementById('buyBotBtn').disabled = true;
+                saveState();
+                updateUI();
+            }
+        }
+
+        function updateBotTimer() {
+            if (!state.hasBot) return;
+            
+            const now = Date.now();
+            const diff = now - state.botStartTime;
+            const fourHours = 4 * 60 * 60 * 1000;
+            
+            if (diff >= fourHours) {
+                document.getElementById('botTimer').textContent = "Готовий!";
+                document.getElementById('botTimer').style.color = "#00FF00";
+                document.getElementById('claimBotBtn').disabled = false;
+            } else {
+                const left = fourHours - diff;
+                const h = Math.floor(left / (1000 * 60 * 60));
+                const m = Math.floor((left % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((left % (1000 * 60)) / 1000);
+                document.getElementById('botTimer').textContent = `${h}:${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+                document.getElementById('botTimer').style.color = "#fff";
+                document.getElementById('claimBotBtn').disabled = true;
+            }
+        }
+
+        function claimBot() {
+            const reward = 10000; // Нагорода за 4 години
+            state.balance += reward;
+            state.botStartTime = Date.now(); // Перезапуск
+            TG.showAlert(`🤖 Бот зібрав ${reward} монет!`);
+            updateUI();
+            saveState();
+        }
+
+        // Буст Ракетка
+        function activateRocket() {
+            const btn = document.getElementById('tapButton');
+            btn.classList.add('rocket-mode');
+            closeModals();
+            setTimeout(() => {
+                btn.classList.remove('rocket-mode');
+            }, 10000); // 10 секунд
+        }
+
+        // Прокачка Енергії
+        function upgradeEnergy() {
+            if (state.balance >= 5000) {
+                state.balance -= 5000;
+                state.maxEnergy += 500;
+                updateUI();
+                saveState();
+            }
+        }
+
+        // Перевірка дати виводу
+        function checkWithdrawalDate() {
+            const now = new Date();
+            const btn = document.getElementById('genButton');
+            const txt = document.getElementById('timerText');
+            
+            if (now >= UNLOCK_DATE) {
+                btn.disabled = false;
+                btn.classList.remove('btn-disabled');
+                btn.classList.add('btn-primary');
+                btn.onclick = () => TG.showAlert("Оберіть метод: NFT, Гаманець або DEX");
+                txt.textContent = "✅ Вивід відкрито!";
+                txt.style.color = "#00FF00";
+            }
+        }
+
+        // Реферали
+        function inviteFriend() {
+            const userId = TG.initDataUnsafe?.user?.id || '0';
+            const url = `https://t.me/ucbgcoin_bot?start=ref_${userId}`;
+            const text = "Отримай 2500 UCBG! Грай в Ukrainian Cyborgs.";
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+            TG.openTelegramLink(shareUrl);
+        }
+
+        // Фінал гри
+        function endGame() {
+            document.getElementById('tapButton').classList.add('exploded');
+            TG.showAlert("💥 Емісія вичерпана! Майнінг завершено. Очікуйте лістингу.");
+        }
+
+        // Оновлення Інтерфейсу
+        function updateUI() {
+            document.getElementById('balance').textContent = state.balance.toLocaleString();
+            document.getElementById('energy').textContent = Math.floor(state.energy);
+            
+            // Реальні токени
+            const realTokens = Math.floor(state.balance / REAL_TOKEN_RATIO);
+            document.getElementById('realTokenVal').textContent = realTokens.toLocaleString();
+
+            // Емісія Бар
+            const percent = (state.balance / MAX_GAME_EMISSION) * 100;
+            document.getElementById('emissionBar').style.width = `${percent}%`;
+            document.getElementById('emissionVal').textContent = percent.toFixed(6);
+
+            if(state.hasBot) document.getElementById('botPanel').style.display = 'flex';
+        }
+
+        function updateEnergy() {
+            if (state.energy < state.maxEnergy) {
+                state.energy += 2;
+                updateUI();
             }
         }
 
@@ -512,193 +434,27 @@
             const el = document.createElement('div');
             el.className = 'floating-text';
             el.textContent = text;
-            // Центруємо відносно кліку
-            el.style.left = `${x - 20}px`; 
-            el.style.top = `${y - 20}px`;
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
             document.body.appendChild(el);
             setTimeout(() => el.remove(), 800);
         }
 
-        // Активація Турбо
-        function activateTurbo() {
-            // Тут можна додати перевірку: чи доступний буст (наприклад, 3 рази на день)
-            if (Date.now() < state.turboEndTime) return; // Вже активний
-
-            state.turboEndTime = Date.now() + 10000; // 10 секунд
-            document.getElementById('tapButton').classList.add('turbo-active');
-            document.getElementById('turboTimer').style.display = 'block';
-            closeModal('upgradeModal');
-            
-            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        // Збереження
+        function saveState() {
+            localStorage.setItem('ucbg_v3', JSON.stringify(state));
+        }
+        function loadState() {
+            const saved = localStorage.getItem('ucbg_v3');
+            if (saved) state = { ...state, ...JSON.parse(saved) };
         }
 
-        // Регенерація енергії та Таймер Турбо
-        setInterval(() => {
-            const maxEn = getMaxEnergy();
-            if (state.energy < maxEn) {
-                state.energy = Math.min(maxEn, state.energy + getRechargeRate());
-                updateUI();
-            }
+        // Модалки
+        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
+        window.closeModals = () => document.querySelectorAll('.modal').forEach(el => el.style.display = 'none');
 
-            // Логіка турбо
-            if (Date.now() < state.turboEndTime) {
-                const timeLeft = Math.ceil((state.turboEndTime - Date.now()) / 1000);
-                document.getElementById('turboTimer').textContent = `🔥 TURBO: ${timeLeft}s`;
-            } else {
-                document.getElementById('tapButton').classList.remove('turbo-active');
-                document.getElementById('turboTimer').style.display = 'none';
-            }
-        }, 1000);
-
-        // --- 3. UPGRADES SYSTEM ---
-
-        function renderUpgrades() {
-            const list = document.getElementById('upgradesList');
-            list.innerHTML = '';
-
-            for (const [key, item] of Object.entries(state.upgrades)) {
-                const cost = Math.floor(item.baseCost * Math.pow(item.costFactor, item.level - 1));
-                const canAfford = state.balance >= cost;
-                
-                // Використовуємо шаблонний рядок для HTML
-                const html = `
-                <div class="list-item">
-                    <div class="item-left">
-                        <div class="item-icon">⚙️</div>
-                        <div class="item-details">
-                            <h4>${item.name} <span style="font-size:11px; color:#aaa;">(Lvl ${item.level})</span></h4>
-                            <p>${item.desc}</p>
-                        </div>
-                    </div>
-                    <button class="upgrade-btn" 
-                            onclick="buyUpgrade('${key}')" 
-                            ${canAfford ? '' : 'disabled'}
-                            style="${canAfford ? '' : 'opacity: 0.5'}">
-                        ${cost.toLocaleString()}
-                    </button>
-                </div>
-                `;
-                list.innerHTML += html;
-            }
-        }
-
-        // Глобальна функція для покупки (щоб працювала в onclick)
-        window.buyUpgrade = function(key) {
-            const item = state.upgrades[key];
-            const cost = Math.floor(item.baseCost * Math.pow(item.costFactor, item.level - 1));
-
-            if (state.balance >= cost) {
-                state.balance -= cost;
-                item.level++;
-                
-                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                
-                updateUI();
-                renderUpgrades();
-                saveData();
-            } else {
-                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-            }
-        };
-
-        // --- 4. LEAGUES ---
-        function updateLeague() {
-            let currentLeague = leagues[0];
-            for (let l of leagues) {
-                if (state.totalMined >= l.min) currentLeague = l;
-            }
-            document.getElementById('currentLeague').textContent = `🎖️ ${currentLeague.name} >`;
-        }
-        
-        function renderLeagues() {
-            const list = document.getElementById('leaguesList');
-            list.innerHTML = '';
-            leagues.forEach(l => {
-                const achieved = state.totalMined >= l.min;
-                const html = `
-                    <div class="list-item" style="opacity: ${achieved ? 1 : 0.5}">
-                        <div class="item-left">
-                            <div class="item-details">
-                                <h4 style="color: ${achieved ? 'var(--accent)' : '#fff'}">${l.name}</h4>
-                                <p>${l.min.toLocaleString()} UCBG</p>
-                            </div>
-                        </div>
-                        <div>${achieved ? '✅' : '🔒'}</div>
-                    </div>
-                `;
-                list.innerHTML += html;
-            });
-        }
-
-        // --- 5. UI & UTILS ---
-
-        function updateUI() {
-            document.getElementById('balance').textContent = state.balance.toLocaleString();
-            document.getElementById('energyVal').textContent = Math.floor(state.energy);
-            document.getElementById('maxEnergyVal').textContent = getMaxEnergy();
-            document.getElementById('tapMultiplier').textContent = (getTapPower() > (1 + state.upgrades.multitap.level - 1)) ? "2 (Turbo)" : "1";
-            
-            updateLeague();
-        }
-
-        function openModal(id) {
-            document.getElementById(id).style.display = 'flex';
-            if (id === 'upgradeModal') renderUpgrades();
-            if (id === 'leagueModal') renderLeagues();
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        function openTab(name) {
-             // Тут можна реалізувати логіку перемикання екранів,
-             // зараз просто закриваємо модалки
-             document.querySelectorAll('.modal').forEach(el => el.style.display = 'none');
-        }
-
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                tg.showAlert("Адресу скопійовано!");
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-            });
-        }
-
-        function inviteFriend() {
-            const userId = tg.initDataUnsafe?.user?.id || '0';
-            // Формуємо посилання на бот з реф-параметром
-            const url = `https://t.me/ucbgcoin_bot?start=ref_${userId}`;
-            const text = "Приєднуйся до Ukrainian Cyborgs! Отримай +5000 монет!";
-            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
-            tg.openTelegramLink(shareUrl);
-        }
-
-        // Збереження (Локальне для демо)
-        function saveData() {
-            localStorage.setItem('ucbg_v2', JSON.stringify(state));
-        }
-        function loadData() {
-            const saved = localStorage.getItem('ucbg_v2');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                // Об'єднуємо об'єкти, щоб не втратити нові поля при оновленні коду
-                state = { ...state, ...parsed, upgrades: { ...state.upgrades, ...parsed.upgrades } };
-            }
-        }
-
-        // --- INIT ---
-        window.addEventListener('load', () => {
-            loadData();
-            updateUI();
-            
-            // Ініціалізація TON Connect UI
-            const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json', // Заміни на свій manifest.json пізніше
-                buttonRootId: 'ton-connect-button'
-            });
-        });
-
+        // Старт
+        init();
     </script>
 </body>
 </html>
