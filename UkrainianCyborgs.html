@@ -7,160 +7,124 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        /* --- C Y B E R P U N K   S T Y L E --- */
+        /* --- CYBERPUNK THEME --- */
         :root {
-            --primary: #00BFFF;    /* Electric Blue */
-            --accent: #FFD700;     /* Cyber Yellow */
-            --bg-dark: #050505;    /* Deep Black */
+            --primary: #00BFFF;
+            --accent: #FFD700;
+            --bg-dark: #050505;
             --card-bg: #141414;
             --danger: #ff3b30;
-            --glow: 0 0 15px rgba(0, 191, 255, 0.6);
         }
 
         body {
-            font-family: 'Courier New', Courier, monospace; /* Техно-шрифт */
+            font-family: 'Courier New', monospace;
             background-color: var(--bg-dark);
-            color: #ffffff;
-            margin: 0; padding: 0;
+            color: #fff; margin: 0; padding: 0;
             display: flex; flex-direction: column; align-items: center;
             height: 100vh; overflow: hidden;
             user-select: none; -webkit-user-select: none;
-            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: 90px;
         }
 
-        /* Анімований фон (Матриця) */
+        /* ФОН */
         .bg-fx {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, #1a2a3a 0%, #000000 90%);
+            background: radial-gradient(circle at 50% 50%, #112, #000);
             z-index: -2;
         }
 
-        /* --- ЕКРАН ЗАВАНТАЖЕННЯ (INTRO) --- */
+        /* ІНТРО */
         #intro-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer; transition: opacity 0.8s;
+            background: #000; z-index: 9999; display: flex; 
+            flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s;
         }
-        .intro-text {
-            color: var(--primary); font-size: 16px; letter-spacing: 2px;
-            animation: pulse 1.5s infinite; text-align: center;
-        }
-        .intro-sub { color: #555; font-size: 10px; margin-top: 10px; }
-        @keyframes pulse { 0% { opacity: 0.5; text-shadow: 0 0 5px var(--primary); } 100% { opacity: 1; text-shadow: 0 0 20px var(--primary); } }
+        .intro-msg { color: var(--primary); font-size: 18px; letter-spacing: 2px; animation: blink 1s infinite; text-align: center; }
+        @keyframes blink { 50% { opacity: 0.5; } }
 
-        /* --- MAIN UI --- */
+        /* ГОЛОВНИЙ ЕКРАН */
         .container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; text-align: center; z-index: 1; }
 
-        h1 {
-            font-family: sans-serif; color: #fff; font-size: 20px; text-transform: uppercase;
-            letter-spacing: 3px; margin-top: 5px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
+        h1 { font-family: sans-serif; font-size: 20px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; text-shadow: 0 0 10px var(--accent); }
 
-        /* Баланс */
-        .balance-wrap { margin: 15px 0; position: relative; }
-        .balance-val { font-size: 42px; font-weight: 800; font-family: sans-serif; text-shadow: var(--glow); }
-        .balance-label { font-size: 12px; color: var(--accent); letter-spacing: 1px; }
+        .balance-val { font-size: 46px; font-weight: 800; font-family: sans-serif; text-shadow: 0 0 15px var(--primary); }
+        .balance-sub { font-size: 12px; color: #888; letter-spacing: 1px; }
 
-        /* АРТ КНОПКА (ТРИЗУБ) */
+        /* КНОПКА-ТРИЗУБ */
         .clicker-area {
             flex-grow: 1; display: flex; justify-content: center; align-items: center;
-            margin: 20px 0; position: relative;
+            margin: 10px 0; position: relative;
         }
         .main-btn {
             width: 280px; height: 280px; border-radius: 50%;
             background: radial-gradient(circle, #152b3c, #000);
-            border: 2px solid rgba(0, 191, 255, 0.3);
+            border: 3px solid #333;
             box-shadow: 0 0 30px rgba(0, 191, 255, 0.1);
             display: flex; justify-content: center; align-items: center;
-            cursor: pointer; transition: transform 0.05s, box-shadow 0.2s;
-            -webkit-tap-highlight-color: transparent;
-            position: relative; overflow: hidden;
+            cursor: pointer; position: relative; overflow: hidden;
+            transition: transform 0.05s;
         }
-        .main-btn:active { transform: scale(0.97); border-color: var(--accent); box-shadow: 0 0 50px rgba(255, 215, 0, 0.3); }
+        .main-btn:active { transform: scale(0.96); border-color: var(--accent); }
 
-        /* SVG Art */
-        .trident-svg {
-            width: 75%; height: 75%;
-            filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.8));
-            transition: filter 0.3s;
-        }
-        /* Анімація "Дихання" для тризуба */
-        @keyframes breathe { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-        .trident-active { animation: breathe 3s infinite ease-in-out; }
+        /* SVG ТРИЗУБ */
+        .trident-svg { width: 70%; height: 70%; filter: drop-shadow(0 0 15px var(--primary)); }
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        .trident-anim { animation: breathe 3s infinite ease-in-out; }
 
-        /* Градієнт для SVG */
-        .stop1 { stop-color: var(--primary); }
-        .stop2 { stop-color: var(--accent); }
-
-        /* Енергія */
+        /* ЕНЕРГІЯ */
         .energy-bar {
-            width: 100%; height: 12px; background: #111; border-radius: 6px;
-            border: 1px solid #333; overflow: hidden; position: relative; margin-top: 10px;
+            width: 100%; height: 10px; background: #222; border-radius: 5px;
+            overflow: hidden; margin-top: 15px; border: 1px solid #444;
         }
-        .energy-fill {
-            height: 100%; background: linear-gradient(90deg, var(--primary), #0055ff);
-            width: 100%; transition: width 0.5s linear;
-            box-shadow: 0 0 10px var(--primary);
-        }
-        .energy-text {
-            display: flex; justify-content: space-between; font-size: 12px; 
-            color: #aaa; margin-top: 5px; font-family: sans-serif;
+        .energy-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #0055ff); width: 100%; transition: width 0.3s; }
+        .energy-info { display: flex; justify-content: space-between; font-size: 12px; color: #ccc; margin-top: 5px; font-family: sans-serif; }
+
+        /* АВТО-БОТ ПАНЕЛЬ */
+        .bot-panel {
+            background: rgba(0, 191, 255, 0.15); border: 1px solid var(--primary);
+            border-radius: 12px; padding: 10px 15px; margin-bottom: 15px;
+            display: none; justify-content: space-between; align-items: center;
         }
 
-        /* Навігація */
+        /* ЦИФРИ (+1) */
+        .floating-txt {
+            position: absolute; color: #fff; font-weight: 900; font-size: 36px;
+            text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+            pointer-events: none; z-index: 1000;
+            animation: floatUp 0.6s ease-out forwards;
+        }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.5); opacity: 0; } }
+
+        /* НАВІГАЦІЯ */
         .nav-bar {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; background: rgba(20, 20, 20, 0.9);
+            width: 92%; max-width: 400px; background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid #333;
-            display: flex; justify-content: space-around; padding: 12px; z-index: 100;
+            display: flex; justify-content: space-around; padding: 10px; z-index: 100;
         }
-        .nav-btn {
-            background: none; border: none; color: #666; font-size: 10px;
-            display: flex; flex-direction: column; align-items: center; cursor: pointer;
-        }
-        .nav-btn.active { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
-        .nav-icon { font-size: 20px; margin-bottom: 4px; }
+        .nav-btn { background: none; border: none; color: #666; font-size: 10px; display: flex; flex-direction: column; align-items: center; }
+        .nav-btn.active { color: var(--accent); }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; }
 
-        /* Modals */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: flex-end; }
-        .modal-card {
-            background: #111; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0;
-            padding: 25px; max-height: 85vh; overflow-y: auto; border-top: 2px solid var(--primary);
-            animation: slideUp 0.3s; position: relative;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .close-x { position: absolute; top: 20px; right: 20px; font-size: 24px; color: #666; cursor: pointer; }
+        /* МОДАЛКИ */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: flex-end; }
+        .modal-card { background: #111; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 25px; max-height: 80vh; overflow-y: auto; border-top: 2px solid var(--primary); }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 24px; color: #666; cursor: pointer; }
         
-        /* Upgrades List */
-        .upg-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 10px;
-            border: 1px solid #333;
-        }
-        .upg-info h4 { margin: 0; color: #fff; font-size: 14px; }
-        .upg-info p { margin: 5px 0 0; font-size: 10px; color: #888; }
-        .buy-btn {
-            background: var(--primary); color: #000; border: none; padding: 8px 15px;
-            border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;
-        }
-        .buy-btn:disabled { background: #333; color: #555; }
-
-        .floating-txt { position: absolute; font-weight: bold; font-size: 24px; color: #fff; pointer-events: none; animation: float 0.8s forwards; }
-        @keyframes float { to { transform: translateY(-80px); opacity: 0; } }
+        .upg-row { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #333; }
+        .btn { background: var(--primary); color: #000; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; }
+        .btn:disabled { background: #333; color: #555; }
 
     </style>
 </head>
 <body>
 
     <div id="intro-layer" onclick="startGame()">
-        <div class="intro-text" id="intro_txt">
+        <div class="intro-msg">
             SYSTEM DETECTED<br>
-            INITIALIZING PROTOCOL...
-        </div>
-        <div class="intro-sub" id="intro_sub">
-            [ TAP TO ACTIVATE ]
+            <span style="font-size:12px; color:#555; margin-top:10px; display:block;">[ TAP TO INITIALIZE ]</span>
         </div>
     </div>
 
@@ -169,231 +133,239 @@
     <div class="container">
         <h1 id="ui_title">UKRAINIAN CYBORGS</h1>
 
-        <div class="balance-wrap">
+        <div style="margin: 20px 0;">
             <div class="balance-val" id="displayBalance">0</div>
-            <div class="balance-label">UCBG COIN</div>
+            <div class="balance-sub">UCBG COIN</div>
+        </div>
+
+        <div class="bot-panel" id="botPanel">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:24px;">🤖</span>
+                <div style="text-align:left;">
+                    <div style="font-size:12px; color:#aaa;" id="txt_bot_stat">Авто-Бот</div>
+                    <div style="font-family:monospace; font-weight:bold;" id="botTimer">04:00:00</div>
+                </div>
+            </div>
+            <button class="btn" id="claimBotBtn" onclick="claimBot()">CLAIM</button>
         </div>
 
         <div class="clicker-area">
             <div class="main-btn" id="tapBtn">
-                <svg class="trident-svg trident-active" viewBox="0 0 512 512">
+                <svg class="trident-svg trident-anim" viewBox="0 0 512 512">
                     <defs>
-                        <linearGradient id="ua_grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" class="stop1" />
-                            <stop offset="100%" class="stop2" />
+                        <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00BFFF;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" />
                         </linearGradient>
-                        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feGaussianBlur stdDeviation="4" result="blur" />
-                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                        </filter>
                     </defs>
-                    <path fill="url(#ua_grad)" filter="url(#glow)" d="M256 32C242.7 32 232 42.7 232 56V192C232 222.9 206.9 248 176 248C145.1 248 120 222.9 120 192V88C120 74.7 109.3 64 96 64C82.7 64 72 74.7 72 88V192C72 249.4 118.6 296 176 296H200V424H152C138.7 424 128 434.7 128 448C128 461.3 138.7 472 152 472H360C373.3 472 384 461.3 384 448C384 434.7 373.3 424 360 424H312V296H336C393.4 296 440 249.4 440 192V88C440 74.7 429.3 64 416 64C402.7 64 392 74.7 392 88V192C392 222.9 366.9 248 336 248C305.1 248 280 222.9 280 192V56C280 42.7 269.3 32 256 32z"/>
+                    <path fill="url(#grad1)" d="M256 32C242.7 32 232 42.7 232 56V192C232 222.9 206.9 248 176 248C145.1 248 120 222.9 120 192V88C120 74.7 109.3 64 96 64C82.7 64 72 74.7 72 88V192C72 249.4 118.6 296 176 296H200V424H152C138.7 424 128 434.7 128 448C128 461.3 138.7 472 152 472H360C373.3 472 384 461.3 384 448C384 434.7 373.3 424 360 424H312V296H336C393.4 296 440 249.4 440 192V88C440 74.7 429.3 64 416 64C402.7 64 392 74.7 392 88V192C392 222.9 366.9 248 336 248C305.1 248 280 222.9 280 192V56C280 42.7 269.3 32 256 32z"/>
                 </svg>
             </div>
         </div>
 
-        <div class="energy-bar">
-            <div class="energy-fill" id="energyFill"></div>
-        </div>
-        <div class="energy-text">
+        <div class="energy-bar"><div class="energy-fill" id="energyFill"></div></div>
+        <div class="energy-info">
             <span>⚡ <span id="enVal">1000</span> / <span id="enMax">1000</span></span>
-            <span id="regenLabel">Charging...</span>
+            <span id="regenState" style="color:var(--primary); display:none;">Charging...</span>
         </div>
     </div>
 
     <div class="nav-bar">
-        <button class="nav-btn active" onclick="closeModals()">
-            <div class="nav-icon">🏠</div><span id="nav_main">Base</span>
-        </button>
-        <button class="nav-btn" onclick="openModal('upgModal')">
-            <div class="nav-icon">🛠</div><span id="nav_upg">Upgrade</span>
-        </button>
-        <button class="nav-btn" onclick="openModal('friendsModal')">
-            <div class="nav-icon">👥</div><span id="nav_team">Team</span>
-        </button>
-        <button class="nav-btn" onclick="openModal('walletModal')">
-            <div class="nav-icon">💎</div><span id="nav_wallet">Wallet</span>
-        </button>
+        <button class="nav-btn active" onclick="closeModals()"><div class="nav-icon">🏠</div>Base</button>
+        <button class="nav-btn" onclick="openModal('upgModal')"><div class="nav-icon">🛠</div>Upgrade</button>
+        <button class="nav-btn" onclick="openModal('friendsModal')"><div class="nav-icon">👥</div>Team</button>
+        <button class="nav-btn" onclick="openModal('walletModal')"><div class="nav-icon">💎</div>Wallet</button>
     </div>
 
     <div id="upgModal" class="modal">
         <div class="modal-card">
-            <span class="close-x" onclick="closeModals()">&times;</span>
-            <h2 id="txt_arsenal">АРСЕНАЛ (Рівні)</h2>
+            <span class="close-btn" onclick="closeModals()">&times;</span>
+            <h2>АРСЕНАЛ</h2>
+            
+            <div class="upg-row" style="border-color:var(--accent);">
+                <div>
+                    <div style="font-size:14px; font-weight:bold; color:var(--accent);">🤖 Авто-Бот</div>
+                    <div style="font-size:10px; color:#888;">Збирає поки ти офлайн (4 год)</div>
+                </div>
+                <button class="btn" id="buyBotBtn" onclick="buyBot()">50,000</button>
+            </div>
+
+            <div class="upg-row" style="border-color:var(--danger);">
+                <div>
+                    <div style="font-size:14px; font-weight:bold; color:var(--danger);">🚀 Ракета (x10)</div>
+                    <div style="font-size:10px; color:#888;">Буст на 10 секунд</div>
+                </div>
+                <button class="btn" style="background:var(--danger); color:#fff;" onclick="activateRocket()">START</button>
+            </div>
+
+            <hr style="border-color:#333; margin:15px 0;">
+
             <div id="upgradesList"></div>
         </div>
     </div>
 
-    <div id="friendsModal" class="modal">
-        <div class="modal-card">
-            <span class="close-x" onclick="closeModals()">&times;</span>
-            <h2>Бригада</h2>
-            <p style="color:#888; font-size:12px;">Запроси бійця - отримай +2500</p>
-            <button class="buy-btn" style="width:100%; margin-top:20px;" onclick="invite()">Запросити</button>
-        </div>
-    </div>
-
-    <div id="walletModal" class="modal">
-        <div class="modal-card">
-            <span class="close-x" onclick="closeModals()">&times;</span>
-            <h2>Генерація</h2>
-            <div id="ton-connect-button" style="width:100%; display:flex; justify-content:center;"></div>
-            <div style="text-align:center; margin-top:20px; color:#555; font-size:12px;">
-                🔒 Вивід заблоковано до 05.02.2026
-            </div>
-        </div>
-    </div>
+    <div id="friendsModal" class="modal"><div class="modal-card"><span class="close-btn" onclick="closeModals()">&times;</span><h2>Бригада</h2><p style="color:#888;">+2500 за друга</p><button class="btn" style="width:100%" onclick="invite()">Запросити</button></div></div>
+    <div id="walletModal" class="modal"><div class="modal-card"><span class="close-btn" onclick="closeModals()">&times;</span><h2>Вивід</h2><div id="ton-btn"></div><p style="text-align:center; margin-top:20px; color:#555;">🔒 До 05.02.2026</p></div></div>
 
     <script>
-        // --- 1. CONFIGURATION & LOCALE ---
+        // --- КОНФІГУРАЦІЯ ---
         const TG = window.Telegram.WebApp;
-        TG.expand();
-        TG.setHeaderColor('#050505');
+        TG.expand(); TG.setHeaderColor('#050505');
 
-        // Auto-detect language from Telegram (No GPS needed)
-        const userLang = TG.initDataUnsafe?.user?.language_code || 'uk'; 
-        const lang = (userLang === 'ru' || userLang === 'be') ? 'ru' : (userLang === 'uk' ? 'uk' : 'en');
+        // ЗВУК (Base64 short blip)
+        const clickSnd = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==");
 
-        const TXT = {
-            uk: {
-                intro: "СИСТЕМА ВИЯВЛЕНА<br>ІНІЦІАЛІЗАЦІЯ...", tap_intro: "[ НАТИСНИ ЩОБ АКТИВУВАТИ ]",
-                title: "UKRAINIAN CYBORGS", main: "База", upg: "Прокачка", team: "Бригада", wallet: "Вивід",
-                arsenal: "АРСЕНАЛ",
-                u_tap: "Потужність удару", u_eng: "Запас енергії", u_reg: "Регенерація",
-                lvl: "Рівень"
-            },
-            en: {
-                intro: "SYSTEM DETECTED<br>INITIALIZING...", tap_intro: "[ TAP TO ACTIVATE ]",
-                title: "UKRAINIAN CYBORGS", main: "Base", upg: "Upgrade", team: "Team", wallet: "Wallet",
-                arsenal: "ARSENAL",
-                u_tap: "Click Power", u_eng: "Energy Limit", u_reg: "Recharge Speed",
-                lvl: "Level"
-            },
-            ru: {
-                intro: "СИСТЕМА ОБНАРУЖЕНА<br>ИНИЦИАЛИЗАЦИЯ...", tap_intro: "[ НАЖМИ ДЛЯ АКТИВАЦИИ ]",
-                title: "UKRAINIAN CYBORGS", main: "База", upg: "Прокачка", team: "Бригада", wallet: "Вывод",
-                arsenal: "АРСЕНАЛ",
-                u_tap: "Мощность клика", u_eng: "Запас энергии", u_reg: "Регенерация",
-                lvl: "Уровень"
-            }
-        }[lang];
+        // Елементи інтерфейсу
+        const elBalance = document.getElementById('displayBalance');
+        const elEnergyFill = document.getElementById('energyFill');
+        const elEnVal = document.getElementById('enVal');
+        const elEnMax = document.getElementById('enMax');
+        const elRegenState = document.getElementById('regenState');
+        const elBotPanel = document.getElementById('botPanel');
+        const elBotTimer = document.getElementById('botTimer');
+        const elClaimBtn = document.getElementById('claimBotBtn');
+        const elTurbo = document.getElementById('turboTimer');
+        const elTapBtn = document.getElementById('tapBtn');
+        const elIntro = document.getElementById('intro-layer');
 
-        // --- 2. STATE MANAGEMENT ---
+        // Дедлайни та Економіка
+        const UNLOCK_DATE = new Date('2026-02-05T00:00:00');
+        const MAX_EMISSION = 2000000000000;
+
+        // СТАН ГРИ (з авто-збереженням)
         let game = {
             balance: 0,
             energy: 1000,
-            hasPlayed: false, // For 5000 bonus
+            hasPlayed: false,
+            hasBot: false,
+            botStartTime: 0,
+            turboEnd: 0,
+            clickCount: 0,
             upgrades: {
-                tap: { lvl: 1, cost: 500, val: 1 },
-                energy: { lvl: 1, cost: 500, val: 1000 }, // +500 per lvl
-                regen: { lvl: 1, cost: 1000, val: 2 } // +1 per lvl
+                tap: { lvl: 1, base: 500, factor: 2, val: 1 },
+                eng: { lvl: 1, base: 500, factor: 2, val: 1000 },
+                reg: { lvl: 1, base: 1000, factor: 2.5, val: 2 }
             }
         };
 
-        // --- 3. LOGIC ---
-        
+        // --- ІНІЦІАЛІЗАЦІЯ ---
         function init() {
             loadGame();
-            
-            // New Player Bonus
+
+            // Бонус за перший вхід
             if (!game.hasPlayed) {
                 game.balance = 5000;
                 game.hasPlayed = true;
                 saveGame();
             }
 
-            applyTexts();
             updateUI();
+            checkDate();
             renderUpgrades();
-            
-            // Regen Loop
+
+            // Основний цикл (1с)
             setInterval(() => {
-                if (game.energy < game.upgrades.energy.val) {
-                    game.energy += game.upgrades.regen.val;
-                    if(game.energy > game.upgrades.energy.val) game.energy = game.upgrades.energy.val;
-                    updateUI();
-                }
-            }, 1000); // Every second
+                regenEnergy();
+                updateBot();
+                checkTurbo();
+            }, 1000);
+
+            // Скидання анти-чіта
+            setInterval(() => { game.clickCount = 0; }, 2000);
 
             // TON Connect
             new TON_CONNECT_UI.TonConnectUI({
                 manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json',
-                buttonRootId: 'ton-connect-button'
+                buttonRootId: 'ton-btn'
             });
         }
 
-        function applyTexts() {
-            document.getElementById('intro_txt').innerHTML = TXT.intro;
-            document.getElementById('intro_sub').innerText = TXT.tap_intro;
-            document.getElementById('ui_title').innerText = TXT.title;
-            document.getElementById('nav_main').innerText = TXT.main;
-            document.getElementById('nav_upg').innerText = TXT.upg;
-            document.getElementById('nav_team').innerText = TXT.team;
-            document.getElementById('nav_wallet').innerText = TXT.wallet;
-            document.getElementById('txt_arsenal').innerText = TXT.arsenal;
-        }
+        // --- ОСНОВНА ЛОГІКА ---
 
-        // Intro Clicker
         window.startGame = () => {
-            const intro = document.getElementById('intro-layer');
-            intro.style.opacity = '0';
-            setTimeout(() => intro.style.display = 'none', 800);
+            elIntro.style.opacity = '0';
+            clickSnd.play().catch(()=>{}); // Спроба програти звук (може бути заблоковано браузером до кліку)
+            setTimeout(() => elIntro.style.display = 'none', 500);
         };
 
-        // Main Click
-        document.getElementById('tapBtn').addEventListener('pointerdown', (e) => {
-            e.preventDefault(); // Prevent zoom
+        // Клік
+        elTapBtn.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+
+            // Ліміт кліків (Анти-чіт)
+            if(game.clickCount > 35) return; 
             
-            let power = game.upgrades.tap.val + (game.upgrades.tap.lvl - 1); // Base calc
-            
+            // Розрахунок сили
+            let power = game.upgrades.tap.val + (game.upgrades.tap.lvl - 1);
+            if (Date.now() < game.turboEnd) power *= 10;
+
             if (game.energy >= power) {
                 game.balance += power;
                 game.energy -= power;
+                game.clickCount++;
                 
-                // Visuals
-                const btn = document.querySelector('.main-btn');
-                btn.style.transform = "scale(0.95)";
-                setTimeout(()=>btn.style.transform="scale(1)", 50);
-                
+                playSound();
                 if(TG.HapticFeedback) TG.HapticFeedback.impactOccurred('light');
 
-                // Floating Text
-                let x = e.clientX; let y = e.clientY;
-                let f = document.createElement('div');
-                f.className = 'floating-txt'; f.innerText = `+${power}`;
-                f.style.left = x + 'px'; f.style.top = y + 'px';
-                document.body.appendChild(f);
-                setTimeout(()=>f.remove(), 800);
+                // Візуальний ефект кнопки
+                elTapBtn.style.transform = "scale(0.95)";
+                setTimeout(() => elTapBtn.style.transform = "scale(1)", 50);
+
+                // Анімація цифр (+1)
+                showFloatingText(e.clientX, e.clientY, `+${power}`);
 
                 updateUI();
                 saveGame();
             }
         });
 
-        // Upgrades System
+        function playSound() {
+            let audio = clickSnd.cloneNode();
+            audio.volume = 0.3;
+            audio.play().catch(()=>{});
+        }
+
+        function showFloatingText(x, y, txt) {
+            let el = document.createElement('div');
+            el.className = 'floating-txt';
+            el.textContent = txt;
+            el.style.left = (x - 20) + 'px';
+            el.style.top = (y - 40) + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 600);
+        }
+
+        // Регенерація
+        function regenEnergy() {
+            let max = game.upgrades.eng.val;
+            if (game.energy < max) {
+                game.energy = Math.min(max, game.energy + game.upgrades.reg.val);
+                updateUI();
+            }
+        }
+
+        // --- ПОКРАЩЕННЯ ---
         function renderUpgrades() {
             const list = document.getElementById('upgradesList');
             list.innerHTML = '';
-            
-            const data = [
-                { id: 'tap', name: TXT.u_tap, desc: "+1 Click" },
-                { id: 'energy', name: TXT.u_eng, desc: "+500 Max" },
-                { id: 'regen', name: TXT.u_reg, desc: "+Speed" }
+            const items = [
+                { id: 'tap', name: "Мультитап (+1)", desc: "Сила удару" },
+                { id: 'eng', name: "Енергія (+500)", desc: "Об'єм баку" },
+                { id: 'reg', name: "Швидкість (+2)", desc: "Відновлення" }
             ];
 
-            data.forEach(u => {
-                let item = game.upgrades[u.id];
-                // Dynamic Cost: Base * 2^(lvl-1)
-                let currentCost = item.cost * Math.pow(2, item.lvl - 1);
+            items.forEach(i => {
+                let u = game.upgrades[i.id];
+                let cost = Math.floor(u.base * Math.pow(u.factor, u.lvl - 1));
                 
                 list.innerHTML += `
-                <div class="upg-item">
-                    <div class="upg-info">
-                        <h4>${u.name} <span style="color:var(--primary)">Lvl ${item.lvl}</span></h4>
-                        <p>${u.desc}</p>
+                <div class="upg-row">
+                    <div>
+                        <div style="font-size:14px; font-weight:bold;">${i.name} <span style="color:var(--primary)">Lvl ${u.lvl}</span></div>
+                        <div style="font-size:10px; color:#888;">${i.desc}</div>
                     </div>
-                    <button class="buy-btn" onclick="buy('${u.id}', ${currentCost})" ${game.balance < currentCost ? 'disabled' : ''}>
-                        ${currentCost.toLocaleString()}
+                    <button class="btn" onclick="buy('${i.id}', ${cost})" ${game.balance < cost ? 'disabled' : ''}>
+                        ${cost.toLocaleString()}
                     </button>
                 </div>`;
             });
@@ -404,42 +376,129 @@
                 game.balance -= cost;
                 game.upgrades[id].lvl++;
                 
-                // Apply logic
-                if(id === 'energy') game.upgrades.energy.val += 500;
-                if(id === 'regen') game.upgrades.regen.val += 1;
+                if(id === 'eng') game.upgrades.eng.val += 500;
+                if(id === 'reg') game.upgrades.reg.val += 2;
 
                 updateUI(); renderUpgrades(); saveGame();
             }
         };
 
-        function updateUI() {
-            document.getElementById('displayBalance').innerText = game.balance.toLocaleString();
-            
-            let cur = Math.floor(game.energy);
-            let max = game.upgrades.energy.val;
-            document.getElementById('enVal').innerText = cur;
-            document.getElementById('enMax').innerText = max;
-            
-            let pct = (cur / max) * 100;
-            document.getElementById('energyFill').style.width = pct + "%";
-        }
+        // --- СПЕЦІАЛЬНІ МОДУЛІ ---
 
-        window.invite = () => {
-             TG.openTelegramLink(`https://t.me/share/url?url=https://t.me/ucbgcoin_bot`);
-        }
+        // Авто-Бот
+        window.buyBot = () => {
+            if(game.balance >= 50000 && !game.hasBot) {
+                game.balance -= 50000;
+                game.hasBot = true;
+                game.botStartTime = Date.now();
+                updateUI(); saveGame();
+            }
+        };
 
-        // Storage
-        function saveGame() { localStorage.setItem('ucbg_v5', JSON.stringify(game)); }
-        function loadGame() {
-            let s = localStorage.getItem('ucbg_v5');
-            if(s) {
-                let loaded = JSON.parse(s);
-                game = {...game, ...loaded}; // Merge to keep new structure if updated
+        window.claimBot = () => {
+            game.balance += 10000; // Фіксована нагорода
+            game.botStartTime = Date.now();
+            TG.showAlert("🤖 Бот зібрав 10,000 UCBG!");
+            updateUI(); saveGame();
+        };
+
+        function updateBot() {
+            if(!game.hasBot) {
+                // Кнопка купівлі в меню апгрейдів (вже є в HTML)
+                // Панель на головній прихована
+                elBotPanel.style.display = 'none';
+                return;
+            }
+
+            // Показати панель, сховати кнопку купівлі
+            elBotPanel.style.display = 'flex';
+            document.getElementById('buyBotBtn').textContent = "OWNED";
+            document.getElementById('buyBotBtn').disabled = true;
+
+            const diff = Date.now() - game.botStartTime;
+            const limit = 4 * 60 * 60 * 1000; // 4 години
+
+            if(diff >= limit) {
+                elBotTimer.textContent = "READY TO CLAIM";
+                elBotTimer.style.color = "#0f0";
+                elClaimBtn.disabled = false;
+            } else {
+                const left = limit - diff;
+                const h = Math.floor(left / 3600000);
+                const m = Math.floor((left % 3600000) / 60000);
+                const s = Math.floor((left % 60000) / 1000);
+                elBotTimer.textContent = `${h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+                elBotTimer.style.color = "#fff";
+                elClaimBtn.disabled = true;
             }
         }
 
-        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
+        // Ракета
+        window.activateTurbo = () => {
+            if(Date.now() < game.turboEnd) return;
+            game.turboEnd = Date.now() + 10000; // 10 сек
+            closeModals();
+            updateUI();
+        };
+
+        function checkTurbo() {
+            if(Date.now() < game.turboEnd) {
+                elTurbo.style.display = 'block';
+                elTurbo.textContent = `🔥 РАКЕТА: ${Math.ceil((game.turboEnd - Date.now())/1000)}s`;
+                elTapBtn.style.borderColor = 'var(--danger)';
+                elTapBtn.style.boxShadow = '0 0 50px var(--danger)';
+            } else {
+                elTurbo.style.display = 'none';
+                elTapBtn.style.borderColor = '#333';
+                elTapBtn.style.boxShadow = '0 0 30px rgba(0,191,255,0.1)';
+            }
+        }
+
+        // --- UI UPDATE ---
+        function updateUI() {
+            elBalance.innerText = game.balance.toLocaleString();
+            
+            let cur = Math.floor(game.energy);
+            let max = game.upgrades.eng.val;
+            elEnVal.innerText = cur;
+            elEnMax.innerText = max;
+            
+            let pct = (cur / max) * 100;
+            elEnergyFill.style.width = pct + "%";
+
+            // Статус регенерації
+            if (cur < max) {
+                elRegenState.style.display = 'block';
+                elRegenState.textContent = `⚡ Charging (+${game.upgrades.reg.val}/s)`;
+            } else {
+                elRegenState.style.display = 'none';
+            }
+        }
+
+        // Інше
+        function checkDate() {
+            if(new Date() >= UNLOCK_DATE) {
+                // Логіка відкриття кнопки (якщо треба)
+            }
+        }
+
+        window.invite = () => TG.openTelegramLink("https://t.me/share/url?url=https://t.me/ucbgcoin_bot");
+        
+        window.openModal = (id) => {
+            document.getElementById(id).style.display = 'flex';
+            if(id === 'upgModal') renderUpgrades();
+        };
         window.closeModals = () => document.querySelectorAll('.modal').forEach(el => el.style.display = 'none');
+
+        // Save/Load
+        function saveGame() { localStorage.setItem('ucbg_v6', JSON.stringify(game)); }
+        function loadGame() {
+            let s = localStorage.getItem('ucbg_v6');
+            if(s) {
+                let d = JSON.parse(s);
+                game = {...game, ...d};
+            }
+        }
 
         window.onload = init;
     </script>
