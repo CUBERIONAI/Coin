@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ukrainian Cyborgs: Project X</title>
+    <title>Ukrainian Cyborgs v1.1</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        /* --- CYBERPUNK THEME UPDATED --- */
+        /* --- CYBERPUNK THEME --- */
         :root {
             --primary: #00BFFF;
             --accent: #FFD700;
+            --bronze: #cd7f32;
+            --silver: #c0c0c0;
+            --gold: #FFD700;
+            --diamond: #b9f2ff;
             --bg-dark: #050505;
             --card-bg: #141414;
             --danger: #ff3b30;
-            --rare: #bf00ff;
         }
 
         body {
@@ -26,41 +29,14 @@
             user-select: none; -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
             padding-bottom: 90px;
-            padding-top: 40px; /* Місце для Squad Header */
         }
 
-        /* ФОН ТА ЕФЕКТИ */
+        /* ФОН */
         .bg-fx {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 50% 50%, #112, #000);
-            z-index: -2; transition: background 0.5s;
+            z-index: -2;
         }
-        
-        /* Ефект бусту (війна/червоний) */
-        .bg-fx.turbo-mode {
-            background: repeating-linear-gradient(
-                45deg,
-                #1a0000,
-                #1a0000 10px,
-                #000 10px,
-                #000 20px
-            );
-            animation: warAlert 2s infinite;
-        }
-        @keyframes warAlert {
-            0% { box-shadow: inset 0 0 50px #500; }
-            50% { box-shadow: inset 0 0 150px #f00; }
-            100% { box-shadow: inset 0 0 50px #500; }
-        }
-
-        /* HEADER КОМАНДИ */
-        .squad-header {
-            position: fixed; top: 0; left: 0; width: 100%; height: 40px;
-            background: rgba(20,20,20,0.95); border-bottom: 1px solid #333;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 50; font-size: 12px; color: #888; gap: 10px;
-        }
-        .squad-link { color: var(--primary); text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 5px; }
 
         /* ІНТРО */
         #intro-layer {
@@ -72,42 +48,71 @@
         .intro-msg { color: var(--primary); font-size: 18px; letter-spacing: 2px; animation: blink 1s infinite; text-align: center; }
         @keyframes blink { 50% { opacity: 0.5; } }
 
+        /* HEADER & SETTINGS */
+        .top-bar {
+            width: 100%; max-width: 420px; padding: 10px 15px; 
+            display: flex; justify-content: space-between; align-items: center;
+            box-sizing: border-box;
+        }
+        .settings-icon { font-size: 24px; cursor: pointer; opacity: 0.7; }
+
         /* ГОЛОВНИЙ ЕКРАН */
-        .container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; text-align: center; z-index: 1; }
+        .container { width: 100%; max-width: 420px; padding: 0 15px; box-sizing: border-box; text-align: center; z-index: 1; flex-grow: 1; display: flex; flex-direction: column; }
 
-        h1 { font-family: sans-serif; font-size: 20px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; text-shadow: 0 0 10px var(--accent); }
+        h1 { font-family: sans-serif; font-size: 20px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin: 0; text-shadow: 0 0 10px var(--accent); }
 
-        .balance-val { font-size: 46px; font-weight: 800; font-family: sans-serif; text-shadow: 0 0 15px var(--primary); }
-        .balance-sub { font-size: 12px; color: #888; letter-spacing: 1px; }
+        .balance-val { font-size: 46px; font-weight: 800; font-family: sans-serif; text-shadow: 0 0 15px var(--primary); margin-top: 10px; }
+        
+        /* LEAGUE BADGE */
+        .league-badge {
+            display: inline-block; padding: 4px 12px; border-radius: 12px;
+            background: rgba(255,255,255,0.1); border: 1px solid #444;
+            font-size: 12px; font-weight: bold; margin-top: 5px; color: #ccc;
+            transition: all 0.3s ease;
+        }
 
         /* КНОПКА-ТРИЗУБ */
         .clicker-area {
             flex-grow: 1; display: flex; justify-content: center; align-items: center;
             margin: 10px 0; position: relative;
+            width: 100%; /* Hitbox optimization */
         }
         .main-btn {
-            width: 280px; height: 280px; border-radius: 50%;
+            width: 75vw; height: 75vw; max-width: 290px; max-height: 290px; /* Responsive size */
+            border-radius: 50%;
             background: radial-gradient(circle, #152b3c, #000);
             border: 3px solid #333;
             box-shadow: 0 0 30px rgba(0, 191, 255, 0.1);
             display: flex; justify-content: center; align-items: center;
             cursor: pointer; position: relative; overflow: hidden;
-            transition: transform 0.05s;
+            transition: transform 0.05s, box-shadow 0.3s;
+            -webkit-touch-callout: none;
         }
-        .main-btn:active { transform: scale(0.96); border-color: var(--accent); }
+        
+        /* Активний стан (якщо анімації увімкнені) */
+        .main-btn.anim-active:active { transform: scale(0.96); border-color: var(--accent); }
+        .main-btn.anim-active.tap-highlight { filter: brightness(1.3); }
+
+        /* Diamond Effect */
+        .diamond-mode {
+            box-shadow: 0 0 50px var(--diamond), inset 0 0 20px var(--diamond) !important;
+            border-color: var(--diamond) !important;
+            animation: diamondPulse 2s infinite;
+        }
+        @keyframes diamondPulse { 0% { box-shadow: 0 0 50px var(--diamond); } 50% { box-shadow: 0 0 80px var(--diamond); } 100% { box-shadow: 0 0 50px var(--diamond); } }
 
         /* SVG ТРИЗУБ */
-        .trident-svg { width: 70%; height: 70%; filter: drop-shadow(0 0 15px var(--primary)); transition: filter 0.3s; }
+        .trident-svg { width: 70%; height: 70%; filter: drop-shadow(0 0 15px var(--primary)); pointer-events: none; }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         .trident-anim { animation: breathe 3s infinite ease-in-out; }
 
         /* ЕНЕРГІЯ */
         .energy-bar {
             width: 100%; height: 10px; background: #222; border-radius: 5px;
-            overflow: hidden; margin-top: 15px; border: 1px solid #444;
+            overflow: hidden; margin-top: auto; margin-bottom: 5px; border: 1px solid #444;
         }
         .energy-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #0055ff); width: 100%; transition: width 0.3s; }
-        .energy-info { display: flex; justify-content: space-between; font-size: 12px; color: #ccc; margin-top: 5px; font-family: sans-serif; }
+        .energy-info { display: flex; justify-content: space-between; font-size: 12px; color: #ccc; margin-bottom: 15px; font-family: sans-serif; }
 
         /* АВТО-БОТ ПАНЕЛЬ */
         .bot-panel {
@@ -128,68 +133,34 @@
         /* НАВІГАЦІЯ */
         .nav-bar {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-            width: 94%; max-width: 400px; background: rgba(20, 20, 20, 0.95);
+            width: 92%; max-width: 400px; background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid #333;
-            display: flex; justify-content: space-between; padding: 10px 15px; z-index: 100; box-sizing: border-box;
+            display: flex; justify-content: space-around; padding: 10px; z-index: 100;
         }
         .nav-btn { background: none; border: none; color: #666; font-size: 10px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
         .nav-btn.active { color: var(--accent); }
-        .nav-icon { font-size: 20px; margin-bottom: 4px; }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; }
 
         /* МОДАЛКИ */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: flex-end; }
-        .modal-card { background: #111; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 25px; max-height: 85vh; overflow-y: auto; border-top: 2px solid var(--primary); position: relative; padding-bottom: 50px; }
+        .modal-card { background: #111; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 25px; max-height: 80vh; overflow-y: auto; border-top: 2px solid var(--primary); color: #fff; box-sizing: border-box; }
         .close-btn { position: absolute; top: 20px; right: 20px; font-size: 24px; color: #666; cursor: pointer; }
         
         .upg-row { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #333; }
         .btn { background: var(--primary); color: #000; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; }
-        .btn:disabled { background: #333; color: #555; cursor: not-allowed; }
-        .btn-full { width: 100%; padding: 12px; margin-top: 10px; font-size: 14px; }
+        .btn:disabled { background: #333; color: #555; }
         
-        /* СТИЛІ ДЛЯ ПОДАРУНКА (GIFT BOX) */
-        #gift-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 3000;
-            display: none; justify-content: center; align-items: center; flex-direction: column;
-        }
-        .gift-box {
-            font-size: 80px; cursor: pointer;
-            animation: shake 2s infinite;
-            filter: drop-shadow(0 0 30px var(--accent));
-        }
-        @keyframes shake { 
-            0% { transform: rotate(0deg); } 
-            25% { transform: rotate(5deg); } 
-            50% { transform: rotate(0deg); } 
-            75% { transform: rotate(-5deg); } 
-            100% { transform: rotate(0deg); }
-        }
-        .gift-open { animation: popOut 0.5s forwards; }
-        @keyframes popOut { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(0); opacity: 0; } }
-        
-        .turbo-msg { font-size: 40px; color: var(--danger); font-weight: 900; text-transform: uppercase; display: none; animation: zoomIn 0.3s forwards; text-shadow: 0 0 20px red; }
-        @keyframes zoomIn { from { transform: scale(0); } to { transform: scale(1); } }
+        /* Toggle Switch */
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(26px); }
 
-        /* INPUT ДЛЯ СТЕЙКІНГУ */
-        .input-field {
-            width: 100%; background: #000; border: 1px solid #333; color: #fff;
-            padding: 12px; border-radius: 8px; box-sizing: border-box; font-family: inherit; margin: 10px 0;
-        }
-
-        .task-item {
-            background: #181818; border: 1px solid #333; padding: 15px; border-radius: 12px; margin-bottom: 10px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
     </style>
 </head>
 <body>
-
-    <div class="squad-header">
-        <span>SQUAD:</span>
-        <a href="javascript:void(0)" onclick="openTelegramChannel()" class="squad-link">
-            @ucbgcoin <span style="font-size:10px;">🛡️</span>
-        </a>
-    </div>
 
     <div id="intro-layer" onclick="startGame()">
         <div class="intro-msg">
@@ -198,29 +169,26 @@
         </div>
     </div>
 
-    <div class="bg-fx" id="bgFx"></div>
+    <div class="bg-fx"></div>
 
-    <div id="gift-overlay">
-        <div style="color:#fff; margin-bottom:20px; letter-spacing:2px;">SECRET SUPPLY DROP</div>
-        <div class="gift-box" id="giftBox" onclick="openGift()">🎁</div>
-        <div class="turbo-msg" id="turboMsg">x10</div>
+    <div class="top-bar">
+        <div></div>
+        <div class="settings-icon" onclick="openModal('settingsModal')">⚙️</div>
     </div>
 
     <div class="container">
         <h1 id="ui_title">UKRAINIAN CYBORGS</h1>
 
-        <div style="margin: 20px 0;">
+        <div>
             <div class="balance-val" id="displayBalance">0</div>
-            <div class="balance-sub">UCBG COIN</div>
+            <div class="league-badge" id="leagueDisplay">Bronze League</div>
         </div>
-
-        <div id="turboTimer" style="display:none; color:var(--danger); font-weight:bold; margin-bottom:10px; font-size:18px; text-shadow: 0 0 10px red;"></div>
 
         <div class="bot-panel" id="botPanel">
             <div style="display:flex; align-items:center; gap:10px;">
                 <span style="font-size:24px;">🤖</span>
                 <div style="text-align:left;">
-                    <div style="font-size:12px; color:#aaa;">Авто-Бот</div>
+                    <div style="font-size:12px; color:#aaa;" id="txt_bot_stat">Авто-Бот</div>
                     <div style="font-family:monospace; font-weight:bold;" id="botTimer">04:00:00</div>
                 </div>
             </div>
@@ -229,20 +197,17 @@
 
         <div class="clicker-area">
             <div class="main-btn" id="tapBtn">
-                <svg class="trident-svg trident-anim" id="tridentSvg" viewBox="0 0 512 512">
+                <svg class="trident-svg trident-anim" viewBox="0 0 512 512">
                     <defs>
                         <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
                             <stop offset="0%" style="stop-color:#00BFFF;stop-opacity:1" />
                             <stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" />
                         </linearGradient>
-                        <linearGradient id="gradRocket" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" style="stop-color:#ff3b30;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#ff9f0a;stop-opacity:1" />
-                        </linearGradient>
                     </defs>
-                    <path id="tridentPath" fill="url(#grad1)" d="M256 32C242.7 32 232 42.7 232 56V192C232 222.9 206.9 248 176 248C145.1 248 120 222.9 120 192V88C120 74.7 109.3 64 96 64C82.7 64 72 74.7 72 88V192C72 249.4 118.6 296 176 296H200V424H152C138.7 424 128 434.7 128 448C128 461.3 138.7 472 152 472H360C373.3 472 384 461.3 384 448C384 434.7 373.3 424 360 424H312V296H336C393.4 296 440 249.4 440 192V88C440 74.7 429.3 64 416 64C402.7 64 392 74.7 392 88V192C392 222.9 366.9 248 336 248C305.1 248 280 222.9 280 192V56C280 42.7 269.3 32 256 32z"/>
+                    <path fill="url(#grad1)" d="M256 32C242.7 32 232 42.7 232 56V192C232 222.9 206.9 248 176 248C145.1 248 120 222.9 120 192V88C120 74.7 109.3 64 96 64C82.7 64 72 74.7 72 88V192C72 249.4 118.6 296 176 296H200V424H152C138.7 424 128 434.7 128 448C128 461.3 138.7 472 152 472H360C373.3 472 384 461.3 384 448C384 434.7 373.3 424 360 424H312V296H336C393.4 296 440 249.4 440 192V88C440 74.7 429.3 64 416 64C402.7 64 392 74.7 392 88V192C392 222.9 366.9 248 336 248C305.1 248 280 222.9 280 192V56C280 42.7 269.3 32 256 32z"/>
                 </svg>
             </div>
+            <div id="turboTimer" style="display:none; position:absolute; bottom:-30px; color:#ff3b30; font-weight:bold;"></div>
         </div>
 
         <div class="energy-bar"><div class="energy-fill" id="energyFill"></div></div>
@@ -254,8 +219,7 @@
 
     <div class="nav-bar">
         <button class="nav-btn active" onclick="closeModals()"><div class="nav-icon">🏠</div>Base</button>
-        <button class="nav-btn" onclick="openModal('earnModal')"><div class="nav-icon">📡</div>Earn</button>
-        <button class="nav-btn" onclick="openModal('upgModal')"><div class="nav-icon">🛠</div>Arsenal</button>
+        <button class="nav-btn" onclick="openModal('upgModal')"><div class="nav-icon">🛠</div>Upgrade</button>
         <button class="nav-btn" onclick="openModal('friendsModal')"><div class="nav-icon">👥</div>Team</button>
         <button class="nav-btn" onclick="openModal('walletModal')"><div class="nav-icon">💎</div>Wallet</button>
     </div>
@@ -263,7 +227,7 @@
     <div id="upgModal" class="modal">
         <div class="modal-card">
             <span class="close-btn" onclick="closeModals()">&times;</span>
-            <h2>АРСЕНАЛ & БУСТИ</h2>
+            <h2>АРСЕНАЛ</h2>
             
             <div class="upg-row" style="border-color:var(--accent);">
                 <div>
@@ -275,91 +239,44 @@
 
             <div class="upg-row" style="border-color:var(--danger);">
                 <div>
-                    <div style="font-size:14px; font-weight:bold; color:var(--danger);">🚀 SECRET DROP (x?)</div>
-                    <div style="font-size:10px; color:#888;">Рандомний множник. 3 спроби/день.</div>
-                    <div style="font-size:10px; color:#fff;" id="rocketStock">Доступно: 3/3</div>
+                    <div style="font-size:14px; font-weight:bold; color:var(--danger);">🚀 Ракета (x10)</div>
+                    <div style="font-size:10px; color:#888;">Буст на 10 секунд</div>
                 </div>
-                <button class="btn" style="background:var(--danger); color:#fff;" onclick="tryActivateRocket()">START</button>
+                <button class="btn" style="background:var(--danger); color:#fff;" onclick="activateRocket()">START</button>
             </div>
 
             <hr style="border-color:#333; margin:15px 0;">
-            <h3 style="font-size:14px; color:#666; margin-bottom:10px;">SYSTEM UPGRADES</h3>
             <div id="upgradesList"></div>
         </div>
     </div>
 
-    <div id="earnModal" class="modal">
+    <div id="settingsModal" class="modal">
         <div class="modal-card">
             <span class="close-btn" onclick="closeModals()">&times;</span>
-            <h2>СПЕЦЗАВДАННЯ</h2>
-            <p style="font-size:12px; color:#888; margin-bottom:20px;">Виконуй місії штабу - отримуй фінансування.</p>
-
-            <div class="task-item" id="task_sub">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <div style="font-size:24px;">📢</div>
-                    <div style="text-align:left;">
-                        <div style="font-weight:bold; color:#fff;">Підписка на канал</div>
-                        <div style="font-size:11px; color:var(--primary);">@ucbgcoin</div>
-                        <div style="font-size:12px; color:var(--accent); margin-top:2px;">+1,000,000 UCBG</div>
-                    </div>
+            <h2>НАЛАШТУВАННЯ</h2>
+            <div class="upg-row" style="border-color:#555;">
+                <div>
+                    <div style="font-size:14px; font-weight:bold;">Анімації</div>
+                    <div style="font-size:10px; color:#888;">Ефекти натискання</div>
                 </div>
-                <button class="btn" id="btnSubTask" onclick="checkSubTask()">Go</button>
+                <label class="switch">
+                    <input type="checkbox" id="animToggle" onchange="toggleAnim()">
+                    <span class="slider"></span>
+                </label>
             </div>
-            
-            <div style="text-align:center; color:#444; font-size:10px; margin-top:20px;">Більше завдань скоро...</div>
+            <div style="text-align:center; color:#555; font-size:10px; margin-top:20px;">
+                Cyborg v1.1 <br> No Audio Edition
+            </div>
         </div>
     </div>
 
-    <div id="friendsModal" class="modal"><div class="modal-card"><span class="close-btn" onclick="closeModals()">&times;</span><h2>Бригада</h2><p style="color:#888;">+2500 за рекрута</p><button class="btn btn-full" onclick="invite()">Запросити Друга</button></div></div>
-
-    <div id="walletModal" class="modal">
-        <div class="modal-card">
-            <span class="close-btn" onclick="closeModals()">&times;</span>
-            <h2>ФІНАНСИ</h2>
-            
-            <div style="background:#1a1a1a; padding:15px; border-radius:12px; margin-bottom:20px; text-align:center;">
-                 <div style="font-size:12px; color:#888;">TON Wallet Connect</div>
-                 <div id="ton-btn" style="margin-top:10px; display:flex; justify-content:center;"></div>
-            </div>
-
-            <div style="border:1px dashed var(--primary); padding:15px; border-radius:12px; margin-bottom:15px;">
-                <h3 style="margin:0 0 10px 0; color:var(--accent);">💎 AIRDROP / PRESALE STAKING</h3>
-                <p style="font-size:10px; color:#ccc; line-height:1.4;">
-                    Внесіть TON у фонд підтримки проекту. Валюта конвертується в UCBG (курс 1 UCBG = $1 еквівалент).
-                    Монети будуть доступні до кінця проекту.
-                </p>
-                
-                <input type="number" id="stakeInput" class="input-field" placeholder="Сума TON (мін. 0.5)">
-                <button class="btn btn-full" style="background:linear-gradient(45deg, #0088cc, #0055ff); color:#fff;" onclick="processDonation()">
-                    SEND TO STAKING POOL
-                </button>
-                <div style="font-size:9px; color:#555; margin-top:5px; text-align:center;">Mini Crypto-Exchange Protocol v1.0</div>
-            </div>
-
-            <div style="background:#222; padding:10px; border-radius:8px;">
-                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
-                    <span style="color:#888;">Total Staked:</span>
-                    <span id="stakedAmount">0 TON</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; font-size:12px;">
-                    <span style="color:#888;">Unlock Date:</span>
-                    <span>05.02.2026</span>
-                </div>
-            </div>
-
-        </div>
-    </div>
+    <div id="friendsModal" class="modal"><div class="modal-card"><span class="close-btn" onclick="closeModals()">&times;</span><h2>Бригада</h2><p style="color:#888;">+2500 за друга</p><button class="btn" style="width:100%" onclick="invite()">Запросити</button></div></div>
+    <div id="walletModal" class="modal"><div class="modal-card"><span class="close-btn" onclick="closeModals()">&times;</span><h2>Вивід</h2><div id="ton-btn"></div><p style="text-align:center; margin-top:20px; color:#555;">🔒 До 05.02.2026</p></div></div>
 
     <script>
         // --- КОНФІГУРАЦІЯ ---
         const TG = window.Telegram.WebApp;
         TG.expand(); TG.setHeaderColor('#050505');
-
-        // Адреса гаманця проекту для "Presale/Staking" (ВСТАВТЕ СЮДИ СВІЙ ГАМАНЕЦЬ)
-        const OWNER_WALLET = "UQD2...CHANGE_THIS_TO_YOUR_WALLET_ADDRESS...xxxx"; 
-
-        // ЗВУК (Base64 short blip)
-        const clickSnd = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
         // Елементи інтерфейсу
         const elBalance = document.getElementById('displayBalance');
@@ -373,24 +290,27 @@
         const elTurbo = document.getElementById('turboTimer');
         const elTapBtn = document.getElementById('tapBtn');
         const elIntro = document.getElementById('intro-layer');
-        const elTridentSvg = document.getElementById('tridentSvg');
-        const elTridentPath = document.getElementById('tridentPath');
-        const elBgFx = document.getElementById('bgFx');
-        const elRocketStock = document.getElementById('rocketStock');
+        const elLeague = document.getElementById('leagueDisplay');
+
+        // Економіка та Ліги
+        const LEAGUES = [
+            { name: "Bronze", limit: 0, reward: 0, color: "var(--bronze)" },
+            { name: "Silver", limit: 50000, reward: 5000, color: "var(--silver)" },
+            { name: "Gold", limit: 500000, reward: 25000, color: "var(--gold)" },
+            { name: "Diamond", limit: 10000000, reward: 100000, color: "var(--diamond)" }
+        ];
 
         // СТАН ГРИ
         let game = {
             balance: 0,
             energy: 1000,
+            leagueIndex: 0,
             hasPlayed: false,
             hasBot: false,
             botStartTime: 0,
             turboEnd: 0,
-            turboMult: 1, // Поточний множник бусту
             clickCount: 0,
-            dailyBoosts: { count: 3, lastReset: 0 }, // Нове
-            tasks: { sub: false }, // Нове
-            staking: { total: 0 }, // Нове
+            settings: { animations: true },
             upgrades: {
                 tap: { lvl: 1, base: 500, factor: 2, val: 1 },
                 eng: { lvl: 1, base: 500, factor: 2, val: 1000 },
@@ -401,38 +321,30 @@
         // --- ІНІЦІАЛІЗАЦІЯ ---
         function init() {
             loadGame();
-            
-            // Перевірка зміни доби для скидання бустів
-            let today = new Date().toDateString();
-            if(game.dailyBoosts.lastReset !== today) {
-                game.dailyBoosts.count = 3;
-                game.dailyBoosts.lastReset = today;
-                saveGame();
-            }
 
-            // Бонус за перший вхід
             if (!game.hasPlayed) {
                 game.balance = 5000;
                 game.hasPlayed = true;
                 saveGame();
             }
 
-            updateUI();
-            renderUpgrades();
-            checkTaskState();
+            // Init Settings UI
+            document.getElementById('animToggle').checked = game.settings.animations;
+            applyAnimationsSetting();
 
-            // Основний цикл (1с)
+            updateUI();
+            checkLeague(); // Перевірка ліги при старті
+            renderUpgrades();
+
             setInterval(() => {
                 regenEnergy();
                 updateBot();
                 checkTurbo();
             }, 1000);
 
-            // Скидання анти-чіта
             setInterval(() => { game.clickCount = 0; }, 2000);
 
-            // TON Connect
-            window.tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            new TON_CONNECT_UI.TonConnectUI({
                 manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json',
                 buttonRootId: 'ton-btn'
             });
@@ -442,51 +354,40 @@
 
         window.startGame = () => {
             elIntro.style.opacity = '0';
-            clickSnd.play().catch(()=>{}); 
             setTimeout(() => elIntro.style.display = 'none', 500);
         };
-        
-        window.openTelegramChannel = () => TG.openTelegramLink("https://t.me/ucbgcoin");
 
         // Клік
         elTapBtn.addEventListener('pointerdown', (e) => {
             e.preventDefault();
 
-            if(game.clickCount > 40) return; // Анти-чіт
+            if(game.clickCount > 35) return; 
             
-            let basePower = game.upgrades.tap.val + (game.upgrades.tap.lvl - 1);
-            let power = basePower;
+            let power = game.upgrades.tap.val + (game.upgrades.tap.lvl - 1);
+            if (Date.now() < game.turboEnd) power *= 10;
 
-            // Перевірка турбо
-            let isTurbo = Date.now() < game.turboEnd;
-            if (isTurbo) power *= game.turboMult;
-
-            if (game.energy >= basePower || isTurbo) {
-                // В режимі турбо енергія не витрачається
-                if(!isTurbo) game.energy -= basePower;
-                
+            if (game.energy >= power) {
                 game.balance += power;
+                game.energy -= power;
                 game.clickCount++;
                 
-                playSound();
-                if(TG.HapticFeedback) TG.HapticFeedback.impactOccurred(isTurbo ? 'heavy' : 'light');
+                if(TG.HapticFeedback) TG.HapticFeedback.impactOccurred('light');
 
-                // Анімація
-                elTapBtn.style.transform = "scale(0.95)";
-                setTimeout(() => elTapBtn.style.transform = "scale(1)", 50);
-
-                showFloatingText(e.clientX, e.clientY, `+${power}`);
+                // Анімація кнопки (якщо включена)
+                if(game.settings.animations) {
+                    // Micro-scaling handled by class check in CSS/JS logic below, 
+                    // but we can add an extra JS trigger for instant feedback
+                    elTapBtn.style.transform = "scale(0.97)";
+                    setTimeout(() => elTapBtn.style.transform = "scale(1)", 80);
+                    
+                    showFloatingText(e.clientX, e.clientY, `+${power}`);
+                }
 
                 updateUI();
+                checkLeague(); // Перевірка прогресу ліги
                 saveGame();
             }
         });
-
-        function playSound() {
-            let audio = clickSnd.cloneNode();
-            audio.volume = 0.3;
-            audio.play().catch(()=>{});
-        }
 
         function showFloatingText(x, y, txt) {
             let el = document.createElement('div');
@@ -494,50 +395,53 @@
             el.textContent = txt;
             el.style.left = (x - 20) + 'px';
             el.style.top = (y - 40) + 'px';
-            if(Date.now() < game.turboEnd) el.style.color = "#ff3b30"; // Червоний текст в турбо
             document.body.appendChild(el);
             setTimeout(() => el.remove(), 600);
         }
 
+        // --- ЛІГИ ---
+        function checkLeague() {
+            let currentLvl = game.leagueIndex;
+            let nextLvl = currentLvl + 1;
+
+            if (nextLvl < LEAGUES.length) {
+                if (game.balance >= LEAGUES[nextLvl].limit) {
+                    // Level Up
+                    game.leagueIndex = nextLvl;
+                    let reward = LEAGUES[nextLvl].reward;
+                    game.balance += reward;
+                    
+                    TG.showAlert(`🏆 Rank Up! ${LEAGUES[nextLvl].name} League\nBonus: +${reward} UCBG`);
+                    
+                    saveGame();
+                    updateUI();
+                }
+            }
+        }
+
+        // --- НАЛАШТУВАННЯ ---
+        window.toggleAnim = () => {
+            game.settings.animations = document.getElementById('animToggle').checked;
+            applyAnimationsSetting();
+            saveGame();
+        };
+
+        function applyAnimationsSetting() {
+            if(game.settings.animations) {
+                elTapBtn.classList.add('anim-active');
+                document.querySelector('.trident-svg').classList.add('trident-anim');
+            } else {
+                elTapBtn.classList.remove('anim-active');
+                document.querySelector('.trident-svg').classList.remove('trident-anim');
+            }
+        }
+
+        // Регенерація
         function regenEnergy() {
-            if(Date.now() < game.turboEnd) return; // Не регенити в турбо
             let max = game.upgrades.eng.val;
             if (game.energy < max) {
                 game.energy = Math.min(max, game.energy + game.upgrades.reg.val);
                 updateUI();
-            }
-        }
-
-        // --- ЗАВДАННЯ ---
-        window.checkSubTask = () => {
-            if(game.tasks.sub) return;
-            
-            let btn = document.getElementById('btnSubTask');
-            btn.textContent = "Checking...";
-            btn.disabled = true;
-
-            TG.openTelegramLink("https://t.me/ucbgcoin");
-
-            // Симуляція перевірки (5 сек)
-            setTimeout(() => {
-                game.tasks.sub = true;
-                game.balance += 1000000;
-                TG.showAlert("Mission Complete! +1,000,000 UCBG");
-                saveGame();
-                updateUI();
-                checkTaskState();
-            }, 5000);
-        };
-
-        function checkTaskState() {
-            let el = document.getElementById('task_sub');
-            let btn = document.getElementById('btnSubTask');
-            if(game.tasks && game.tasks.sub) {
-                el.style.opacity = '0.5';
-                el.style.borderColor = 'var(--primary)';
-                btn.textContent = "DONE";
-                btn.style.background = "#333";
-                btn.disabled = true;
             }
         }
 
@@ -546,9 +450,9 @@
             const list = document.getElementById('upgradesList');
             list.innerHTML = '';
             const items = [
-                { id: 'tap', name: "Cyber Arm", desc: "Сила удару (+1)" },
-                { id: 'eng', name: "Battery Pack", desc: "Об'єм баку (+500)" },
-                { id: 'reg', name: "Reactor", desc: "Відновлення (+2/s)" }
+                { id: 'tap', name: "Мультитап (+1)", desc: "Сила удару" },
+                { id: 'eng', name: "Енергія (+500)", desc: "Об'єм баку" },
+                { id: 'reg', name: "Швидкість (+2)", desc: "Відновлення" }
             ];
 
             items.forEach(i => {
@@ -566,24 +470,19 @@
                     </button>
                 </div>`;
             });
-            
-            // Оновлення лічильника ракет
-            if(elRocketStock) elRocketStock.textContent = `Доступно: ${game.dailyBoosts.count}/3`;
         }
 
         window.buy = (id, cost) => {
             if(game.balance >= cost) {
-                game.balance -= cost; // Витрачаємо монети
+                game.balance -= cost;
                 game.upgrades[id].lvl++;
-                
                 if(id === 'eng') game.upgrades.eng.val += 500;
                 if(id === 'reg') game.upgrades.reg.val += 2;
-
                 updateUI(); renderUpgrades(); saveGame();
             }
         };
 
-        // --- АВТО-БОТ ---
+        // --- СПЕЦІАЛЬНІ МОДУЛІ ---
         window.buyBot = () => {
             if(game.balance >= 50000 && !game.hasBot) {
                 game.balance -= 50000;
@@ -594,15 +493,17 @@
         };
 
         window.claimBot = () => {
-            game.balance += 10000; 
+            game.balance += 10000;
             game.botStartTime = Date.now();
             TG.showAlert("🤖 Бот зібрав 10,000 UCBG!");
             updateUI(); saveGame();
         };
 
         function updateBot() {
-            if(!game.hasBot) { elBotPanel.style.display = 'none'; return; }
-            
+            if(!game.hasBot) {
+                elBotPanel.style.display = 'none';
+                return;
+            }
             elBotPanel.style.display = 'flex';
             document.getElementById('buyBotBtn').textContent = "OWNED";
             document.getElementById('buyBotBtn').disabled = true;
@@ -625,154 +526,80 @@
             }
         }
 
-        // --- РАКЕТА / GIFT BOX SYSTEM ---
-        window.tryActivateRocket = () => {
-            if(game.dailyBoosts.count <= 0) {
-                TG.showAlert("Ліміт на сьогодні вичерпано! Чекайте завтра.");
-                return;
-            }
-            
+        window.activateRocket = () => {
+            if(Date.now() < game.turboEnd) return;
+            game.turboEnd = Date.now() + 10000; 
             closeModals();
-            // Показати подарунок
-            document.getElementById('gift-overlay').style.display = 'flex';
-        };
-
-        window.openGift = () => {
-            let box = document.getElementById('giftBox');
-            let msg = document.getElementById('turboMsg');
-            
-            // Анімація відкриття
-            box.classList.add('gift-open');
-            
-            // Генерація рандомного множника (x5, x10, x20, x50)
-            let mults = [5, 10, 15, 20, 50];
-            let rand = mults[Math.floor(Math.random() * mults.length)];
-            game.turboMult = rand;
-            
-            msg.textContent = `x${rand}`;
-            msg.style.display = 'block';
-
-            setTimeout(() => {
-                document.getElementById('gift-overlay').style.display = 'none';
-                box.classList.remove('gift-open');
-                msg.style.display = 'none';
-                activateRocketLogic();
-            }, 1500);
-        };
-
-        function activateRocketLogic() {
-            game.dailyBoosts.count--;
-            game.turboEnd = Date.now() + 10000; // 10 сек
-            saveGame();
             updateUI();
-            renderUpgrades(); // Оновити лічильник в UI
-        }
+        };
 
         function checkTurbo() {
             if(Date.now() < game.turboEnd) {
                 elTurbo.style.display = 'block';
-                elTurbo.textContent = `⚠️ WAR MODE: ${Math.ceil((game.turboEnd - Date.now())/1000)}s`;
-                
-                // Стилі війни
-                elBgFx.classList.add('turbo-mode');
+                elTurbo.textContent = `🔥 РАКЕТА: ${Math.ceil((game.turboEnd - Date.now())/1000)}s`;
+                // Тільки зміна кольору, без скакання розмірів
                 elTapBtn.style.borderColor = 'var(--danger)';
-                elTapBtn.style.boxShadow = '0 0 50px var(--danger)';
-                elTridentPath.setAttribute('fill', 'url(#gradRocket)');
-                
             } else {
                 elTurbo.style.display = 'none';
-                elBgFx.classList.remove('turbo-mode');
-                elTapBtn.style.borderColor = '#333';
-                elTapBtn.style.boxShadow = '0 0 30px rgba(0,191,255,0.1)';
-                elTridentPath.setAttribute('fill', 'url(#grad1)');
-                game.turboMult = 1;
+                // Повертаємо стиль згідно ліги
+                if(game.leagueIndex === 3) {
+                     elTapBtn.style.borderColor = 'var(--diamond)';
+                } else {
+                     elTapBtn.style.borderColor = '#333';
+                }
             }
         }
 
-        // --- WALLET & STAKING ---
-        window.processDonation = async () => {
-            let amount = parseFloat(document.getElementById('stakeInput').value);
-            if(!amount || amount < 0.5) {
-                TG.showAlert("Мінімальна сума стейкінгу: 0.5 TON");
-                return;
-            }
-
-            const transaction = {
-                validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
-                messages: [
-                    {
-                        address: OWNER_WALLET, // Адреса власника
-                        amount: (amount * 1000000000).toString(), // nanoton
-                    }
-                ]
-            };
-
-            try {
-                // Виклик гаманця TON
-                const result = await tonConnectUI.sendTransaction(transaction);
-                
-                if (result) {
-                    TG.showAlert("Транзакція відправлена! Монети будуть нараховані після підтвердження блокчейном.");
-                    // Імітація нарахування для UI (в реальності треба бекенд)
-                    game.staking.total += amount;
-                    // Якщо курс 1$ = 1 монета, а TON = 5$ (приклад), нарахуємо умовно
-                    // Тут ми просто покажемо, що TON прийнято
-                    document.getElementById('stakeInput').value = '';
-                    saveGame();
-                    updateUI();
-                }
-            } catch (e) {
-                console.error(e);
-                TG.showAlert("Відміна або помилка транзакції.");
-            }
-        };
-
         // --- UI UPDATE ---
         function updateUI() {
-            elBalance.innerText = Math.floor(game.balance).toLocaleString();
+            elBalance.innerText = game.balance.toLocaleString();
             
+            // Energy
             let cur = Math.floor(game.energy);
             let max = game.upgrades.eng.val;
             elEnVal.innerText = cur;
             elEnMax.innerText = max;
-            
-            let pct = (cur / max) * 100;
-            elEnergyFill.style.width = pct + "%";
+            elEnergyFill.style.width = (cur / max) * 100 + "%";
 
-            if (cur < max && Date.now() > game.turboEnd) {
+            if (cur < max) {
                 elRegenState.style.display = 'block';
                 elRegenState.textContent = `⚡ Charging (+${game.upgrades.reg.val}/s)`;
             } else {
                 elRegenState.style.display = 'none';
             }
-            
-            // Оновлення стейкінгу
-            let stakedEl = document.getElementById('stakedAmount');
-            if(stakedEl && game.staking) {
-                stakedEl.innerText = game.staking.total + " TON";
+
+            // League Update
+            let lInfo = LEAGUES[game.leagueIndex];
+            elLeague.textContent = `${lInfo.name} League`;
+            elLeague.style.color = lInfo.color;
+            elLeague.style.borderColor = lInfo.color;
+
+            // Diamond Effect
+            if(game.leagueIndex === 3) {
+                elTapBtn.classList.add('diamond-mode');
+            } else {
+                elTapBtn.classList.remove('diamond-mode');
             }
         }
 
-        window.invite = () => TG.openTelegramLink("https://t.me/share/url?url=https://t.me/ucbgcoin_bot&text=Приєднуйся до Кіборгів! Отримай бонус.");
+        window.invite = () => TG.openTelegramLink("https://t.me/share/url?url=https://t.me/ucbgcoin_bot");
         
         window.openModal = (id) => {
             document.getElementById(id).style.display = 'flex';
             if(id === 'upgModal') renderUpgrades();
-            if(id === 'earnModal') checkTaskState();
         };
         window.closeModals = () => document.querySelectorAll('.modal').forEach(el => el.style.display = 'none');
 
-        // Save/Load System (v7)
-        function saveGame() { localStorage.setItem('ucbg_v7', JSON.stringify(game)); }
+        // Save/Load
+        function saveGame() { localStorage.setItem('ucbg_v1_1', JSON.stringify(game)); }
         function loadGame() {
-            let s = localStorage.getItem('ucbg_v7');
+            let s = localStorage.getItem('ucbg_v1_1');
             if(s) {
                 let d = JSON.parse(s);
-                // Мердж даних, щоб старі сейви не ламались
+                // Merge to ensure new fields (like settings/league) exist for old saves
                 game = {...game, ...d};
-                if(!game.dailyBoosts) game.dailyBoosts = { count: 3, lastReset: 0 };
-                if(!game.tasks) game.tasks = { sub: false };
-                if(!game.staking) game.staking = { total: 0 };
+                // Ensure settings object exists
+                if(!game.settings) game.settings = { animations: true };
             }
         }
 
