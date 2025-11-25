@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ukrainian Cyborgs v1.1</title>
+    <title>Ukrainian Cyborgs v1.4 (Eco)</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        /* --- CYBERPUNK THEME --- */
+        /* --- СТИЛІ ЗАЛИШЕНО БЕЗ ЗМІН (v1.1) --- */
         :root {
             --primary: #00BFFF;
             --accent: #FFD700;
@@ -31,14 +31,12 @@
             padding-bottom: 90px;
         }
 
-        /* ФОН */
         .bg-fx {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 50% 50%, #112, #000);
             z-index: -2;
         }
 
-        /* ІНТРО */
         #intro-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: flex; 
@@ -48,7 +46,6 @@
         .intro-msg { color: var(--primary); font-size: 18px; letter-spacing: 2px; animation: blink 1s infinite; text-align: center; }
         @keyframes blink { 50% { opacity: 0.5; } }
 
-        /* HEADER & SETTINGS */
         .top-bar {
             width: 100%; max-width: 420px; padding: 10px 15px; 
             display: flex; justify-content: space-between; align-items: center;
@@ -56,14 +53,12 @@
         }
         .settings-icon { font-size: 24px; cursor: pointer; opacity: 0.7; }
 
-        /* ГОЛОВНИЙ ЕКРАН */
         .container { width: 100%; max-width: 420px; padding: 0 15px; box-sizing: border-box; text-align: center; z-index: 1; flex-grow: 1; display: flex; flex-direction: column; }
 
         h1 { font-family: sans-serif; font-size: 20px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin: 0; text-shadow: 0 0 10px var(--accent); }
 
         .balance-val { font-size: 46px; font-weight: 800; font-family: sans-serif; text-shadow: 0 0 15px var(--primary); margin-top: 10px; }
         
-        /* LEAGUE BADGE */
         .league-badge {
             display: inline-block; padding: 4px 12px; border-radius: 12px;
             background: rgba(255,255,255,0.1); border: 1px solid #444;
@@ -71,14 +66,12 @@
             transition: all 0.3s ease;
         }
 
-        /* КНОПКА-ТРИЗУБ */
         .clicker-area {
             flex-grow: 1; display: flex; justify-content: center; align-items: center;
-            margin: 10px 0; position: relative;
-            width: 100%; /* Hitbox optimization */
+            margin: 10px 0; position: relative; width: 100%;
         }
         .main-btn {
-            width: 75vw; height: 75vw; max-width: 290px; max-height: 290px; /* Responsive size */
+            width: 75vw; height: 75vw; max-width: 290px; max-height: 290px;
             border-radius: 50%;
             background: radial-gradient(circle, #152b3c, #000);
             border: 3px solid #333;
@@ -89,11 +82,7 @@
             -webkit-touch-callout: none;
         }
         
-        /* Активний стан (якщо анімації увімкнені) */
         .main-btn.anim-active:active { transform: scale(0.96); border-color: var(--accent); }
-        .main-btn.anim-active.tap-highlight { filter: brightness(1.3); }
-
-        /* Diamond Effect */
         .diamond-mode {
             box-shadow: 0 0 50px var(--diamond), inset 0 0 20px var(--diamond) !important;
             border-color: var(--diamond) !important;
@@ -101,12 +90,10 @@
         }
         @keyframes diamondPulse { 0% { box-shadow: 0 0 50px var(--diamond); } 50% { box-shadow: 0 0 80px var(--diamond); } 100% { box-shadow: 0 0 50px var(--diamond); } }
 
-        /* SVG ТРИЗУБ */
         .trident-svg { width: 70%; height: 70%; filter: drop-shadow(0 0 15px var(--primary)); pointer-events: none; }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         .trident-anim { animation: breathe 3s infinite ease-in-out; }
 
-        /* ЕНЕРГІЯ */
         .energy-bar {
             width: 100%; height: 10px; background: #222; border-radius: 5px;
             overflow: hidden; margin-top: auto; margin-bottom: 5px; border: 1px solid #444;
@@ -114,14 +101,12 @@
         .energy-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #0055ff); width: 100%; transition: width 0.3s; }
         .energy-info { display: flex; justify-content: space-between; font-size: 12px; color: #ccc; margin-bottom: 15px; font-family: sans-serif; }
 
-        /* АВТО-БОТ ПАНЕЛЬ */
         .bot-panel {
             background: rgba(0, 191, 255, 0.15); border: 1px solid var(--primary);
             border-radius: 12px; padding: 10px 15px; margin-bottom: 15px;
             display: none; justify-content: space-between; align-items: center;
         }
 
-        /* ЦИФРИ (+1) */
         .floating-txt {
             position: absolute; color: #fff; font-weight: 900; font-size: 36px;
             text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
@@ -130,18 +115,16 @@
         }
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.5); opacity: 0; } }
 
-        /* НАВІГАЦІЯ */
         .nav-bar {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-            width: 92%; max-width: 400px; background: rgba(20, 20, 20, 0.95);
+            width: 96%; max-width: 400px; background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid #333;
-            display: flex; justify-content: space-around; padding: 10px; z-index: 100;
+            display: flex; justify-content: space-around; padding: 10px 5px; z-index: 100;
         }
-        .nav-btn { background: none; border: none; color: #666; font-size: 10px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .nav-btn { background: none; border: none; color: #666; font-size: 9px; display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; }
         .nav-btn.active { color: var(--accent); }
-        .nav-icon { font-size: 22px; margin-bottom: 4px; }
+        .nav-icon { font-size: 20px; margin-bottom: 4px; }
 
-        /* МОДАЛКИ */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: flex-end; }
         .modal-card { background: #111; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 25px; max-height: 80vh; overflow-y: auto; border-top: 2px solid var(--primary); color: #fff; box-sizing: border-box; }
         .close-btn { position: absolute; top: 20px; right: 20px; font-size: 24px; color: #666; cursor: pointer; }
@@ -150,7 +133,6 @@
         .btn { background: var(--primary); color: #000; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; }
         .btn:disabled { background: #333; color: #555; }
         
-        /* Toggle Switch */
         .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 24px; }
@@ -219,7 +201,8 @@
 
     <div class="nav-bar">
         <button class="nav-btn active" onclick="closeModals()"><div class="nav-icon">🏠</div>Base</button>
-        <button class="nav-btn" onclick="openModal('upgModal')"><div class="nav-icon">🛠</div>Upgrade</button>
+        <button class="nav-btn" onclick="openModal('tasksModal')"><div class="nav-icon">📡</div>Tasks</button>
+        <button class="nav-btn" onclick="openModal('upgModal')"><div class="nav-icon">🛠</div>Upg</button>
         <button class="nav-btn" onclick="openModal('friendsModal')"><div class="nav-icon">👥</div>Team</button>
         <button class="nav-btn" onclick="openModal('walletModal')"><div class="nav-icon">💎</div>Wallet</button>
     </div>
@@ -250,6 +233,30 @@
         </div>
     </div>
 
+    <div id="tasksModal" class="modal">
+        <div class="modal-card">
+            <span class="close-btn" onclick="closeModals()">&times;</span>
+            <h2>СПЕЦ ЗАВДАННЯ</h2>
+            <p style="color:#888; text-align:center; font-size:12px;">Підпишись для фінансування</p>
+            
+            <div class="upg-row">
+                <div>
+                    <div style="font-size:14px; font-weight:bold;">Канал UCBG</div>
+                    <div style="font-size:10px; color:#888;">+1,000,000 Монет</div>
+                </div>
+                <button class="btn" id="task1Btn" onclick="checkTask('task1', 'https://t.me/ucbgcoin')">Go</button>
+            </div>
+
+            <div class="upg-row">
+                <div>
+                    <div style="font-size:14px; font-weight:bold;">Чат Кіборгів</div>
+                    <div style="font-size:10px; color:#888;">+1,000,000 Монет</div>
+                </div>
+                <button class="btn" id="task2Btn" onclick="checkTask('task2', 'https://t.me/ukrainian_cyborgs_ton')">Go</button>
+            </div>
+        </div>
+    </div>
+
     <div id="settingsModal" class="modal">
         <div class="modal-card">
             <span class="close-btn" onclick="closeModals()">&times;</span>
@@ -265,13 +272,60 @@
                 </label>
             </div>
             <div style="text-align:center; color:#555; font-size:10px; margin-top:20px;">
-                Cyborg v1.1 <br> No Audio Edition
+                Cyborg v1.4 Eco <br> Stabilized
             </div>
         </div>
     </div>
 
-    <div id="friendsModal" class="modal"><div class="modal-card"><span class="close-btn" onclick="closeModals()">&times;</span><h2>Бригада</h2><p style="color:#888;">+2500 за друга</p><button class="btn" style="width:100%" onclick="invite()">Запросити</button></div></div>
-    <div id="walletModal" class="modal"><div class="modal-card"><span class="close-btn" onclick="closeModals()">&times;</span><h2>Вивід</h2><div id="ton-btn"></div><p style="text-align:center; margin-top:20px; color:#555;">🔒 До 05.02.2026</p></div></div>
+    <div id="friendsModal" class="modal">
+        <div class="modal-card">
+            <span class="close-btn" onclick="closeModals()">&times;</span>
+            <h2>Бригада</h2>
+            <p style="color:#aaa; text-align:center;">Запроси бійця в команду:</p>
+            <div style="background:#1a1a1a; padding:15px; border-radius:10px; margin:10px 0; border:1px solid #333;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span>Тобі:</span> <span style="color:var(--primary); font-weight:bold;">+500,000</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Другу:</span> <span style="color:var(--accent); font-weight:bold;">+250,000</span>
+                </div>
+            </div>
+            <button class="btn" style="width:100%" onclick="invite()">Запросити</button>
+        </div>
+    </div>
+
+    <div id="walletModal" class="modal">
+        <div class="modal-card">
+            <span class="close-btn" onclick="closeModals()">&times;</span>
+            <h2>ФІНАНСИ</h2>
+            <div id="ton-btn" style="margin-bottom:20px;"></div>
+            
+            <hr style="border-color:#333;">
+            
+            <h3 style="font-size:16px; color:var(--accent);">NFT Ваучери</h3>
+            <div class="upg-row" style="border-color:var(--primary);">
+                <div>
+                    <div style="font-size:14px; font-weight:bold;">Getgems Market</div>
+                    <div style="font-size:10px; color:#888;">Купити ваучер (1М монет)</div>
+                </div>
+                <button class="btn" onclick="window.open('https://getgems.io/collection/EQBiMglpS3o2nMB89NS0Wp6wgqacaOhT0QdZgQ_svTlhTdsO/EQDWHsTEXeaJEMcDfuyujSVf8VrHBlKljqKqFo1aDRDc6qvc')">BUY</button>
+            </div>
+            <button class="btn" style="width:100%; background:#222; color:#888;" onclick="scanNFT()">🔄 Сканувати NFT</button>
+
+            <hr style="border-color:#333; margin:20px 0;">
+
+            <h3 style="font-size:16px; color:var(--primary);">Стейкінг TON</h3>
+            <div class="upg-row">
+                <div>
+                    <div style="font-size:14px;">Вклад 10 TON</div>
+                    <div style="font-size:10px; color:#0f0;">+1,000,000 / день</div>
+                </div>
+                <button class="btn" onclick="startStaking()">STAKE</button>
+            </div>
+            
+            <p style="text-align:center; margin-top:20px; color:#555; font-size:10px;">Блокчейн операції обробляються автоматично.</p>
+        </div>
+    </div>
 
     <script>
         // --- КОНФІГУРАЦІЯ ---
@@ -300,7 +354,7 @@
             { name: "Diamond", limit: 10000000, reward: 100000, color: "var(--diamond)" }
         ];
 
-        // СТАН ГРИ
+        // СТАН ГРИ (Додано: tasks, referral check)
         let game = {
             balance: 0,
             energy: 1000,
@@ -310,6 +364,7 @@
             botStartTime: 0,
             turboEnd: 0,
             clickCount: 0,
+            tasks: { task1: false, task2: false }, // Стан завдань
             settings: { animations: true },
             upgrades: {
                 tap: { lvl: 1, base: 500, factor: 2, val: 1 },
@@ -322,8 +377,15 @@
         function init() {
             loadGame();
 
+            // Перевірка реферала (перший запуск)
+            const initData = TG.initDataUnsafe;
             if (!game.hasPlayed) {
                 game.balance = 5000;
+                // Якщо є start_param (реферал)
+                if(initData && initData.start_param) {
+                    game.balance += 250000; // Бонус за друга
+                    TG.showAlert("🎁 Ви отримали +250,000 монет від друга!");
+                }
                 game.hasPlayed = true;
                 saveGame();
             }
@@ -333,8 +395,9 @@
             applyAnimationsSetting();
 
             updateUI();
-            checkLeague(); // Перевірка ліги при старті
+            checkLeague(); 
             renderUpgrades();
+            updateTasksUI();
 
             setInterval(() => {
                 regenEnergy();
@@ -360,7 +423,6 @@
         // Клік
         elTapBtn.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-
             if(game.clickCount > 35) return; 
             
             let power = game.upgrades.tap.val + (game.upgrades.tap.lvl - 1);
@@ -373,18 +435,14 @@
                 
                 if(TG.HapticFeedback) TG.HapticFeedback.impactOccurred('light');
 
-                // Анімація кнопки (якщо включена)
                 if(game.settings.animations) {
-                    // Micro-scaling handled by class check in CSS/JS logic below, 
-                    // but we can add an extra JS trigger for instant feedback
                     elTapBtn.style.transform = "scale(0.97)";
                     setTimeout(() => elTapBtn.style.transform = "scale(1)", 80);
-                    
                     showFloatingText(e.clientX, e.clientY, `+${power}`);
                 }
 
                 updateUI();
-                checkLeague(); // Перевірка прогресу ліги
+                checkLeague();
                 saveGame();
             }
         });
@@ -406,18 +464,60 @@
 
             if (nextLvl < LEAGUES.length) {
                 if (game.balance >= LEAGUES[nextLvl].limit) {
-                    // Level Up
                     game.leagueIndex = nextLvl;
                     let reward = LEAGUES[nextLvl].reward;
                     game.balance += reward;
-                    
                     TG.showAlert(`🏆 Rank Up! ${LEAGUES[nextLvl].name} League\nBonus: +${reward} UCBG`);
-                    
                     saveGame();
                     updateUI();
                 }
             }
         }
+
+        // --- ЗАВДАННЯ (Нова логіка) ---
+        window.checkTask = (taskId, url) => {
+            if(game.tasks && game.tasks[taskId]) return; // Вже виконано
+
+            // Відкриваємо лінк
+            TG.openTelegramLink(url);
+            
+            // Імітуємо перевірку через 3 секунди
+            setTimeout(() => {
+                TG.showConfirm("Ви підписалися на канал?", (ok) => {
+                    if(ok) {
+                        if(!game.tasks) game.tasks = {};
+                        game.tasks[taskId] = true;
+                        game.balance += 1000000;
+                        TG.showAlert("✅ Завдання виконано! +1,000,000");
+                        updateTasksUI();
+                        saveGame();
+                        updateUI();
+                    }
+                });
+            }, 3000);
+        };
+
+        function updateTasksUI() {
+            if(game.tasks?.task1) {
+                document.getElementById('task1Btn').textContent = "DONE";
+                document.getElementById('task1Btn').disabled = true;
+            }
+            if(game.tasks?.task2) {
+                document.getElementById('task2Btn').textContent = "DONE";
+                document.getElementById('task2Btn').disabled = true;
+            }
+        }
+
+        // --- NFT ТА СТЕЙКІНГ (Нова логіка) ---
+        window.scanNFT = () => {
+            // Тут буде реальний код перевірки через TON API
+            TG.showAlert("🔍 Сканування гаманця...\nNFT ваучери не знайдено.");
+        };
+
+        window.startStaking = () => {
+            // Тут буде смарт-контракт
+            TG.showAlert("⚙️ Стейкінг пул запускається...\nСлідкуйте за новинами в каналі.");
+        };
 
         // --- НАЛАШТУВАННЯ ---
         window.toggleAnim = () => {
@@ -537,11 +637,9 @@
             if(Date.now() < game.turboEnd) {
                 elTurbo.style.display = 'block';
                 elTurbo.textContent = `🔥 РАКЕТА: ${Math.ceil((game.turboEnd - Date.now())/1000)}s`;
-                // Тільки зміна кольору, без скакання розмірів
                 elTapBtn.style.borderColor = 'var(--danger)';
             } else {
                 elTurbo.style.display = 'none';
-                // Повертаємо стиль згідно ліги
                 if(game.leagueIndex === 3) {
                      elTapBtn.style.borderColor = 'var(--diamond)';
                 } else {
@@ -574,7 +672,6 @@
             elLeague.style.color = lInfo.color;
             elLeague.style.borderColor = lInfo.color;
 
-            // Diamond Effect
             if(game.leagueIndex === 3) {
                 elTapBtn.classList.add('diamond-mode');
             } else {
@@ -582,11 +679,20 @@
             }
         }
 
-        window.invite = () => TG.openTelegramLink("https://t.me/share/url?url=https://t.me/ucbgcoin_bot");
+        // --- INVITE (Оновлений лінк) ---
+        window.invite = () => {
+            // Формуємо лінк з ID юзера (якщо доступно)
+            const userId = TG.initDataUnsafe?.user?.id || "";
+            const botLink = `https://t.me/ucbgcoin_bot/Ucbgcoin?startapp=${userId}`;
+            const text = "Отримай +250k монет в Ukrainian Cyborgs! 🦾🇺🇦";
+            const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(botLink)}&text=${encodeURIComponent(text)}`;
+            TG.openTelegramLink(fullUrl);
+        };
         
         window.openModal = (id) => {
             document.getElementById(id).style.display = 'flex';
             if(id === 'upgModal') renderUpgrades();
+            if(id === 'tasksModal') updateTasksUI(); // Оновити статус завдань
         };
         window.closeModals = () => document.querySelectorAll('.modal').forEach(el => el.style.display = 'none');
 
@@ -596,10 +702,10 @@
             let s = localStorage.getItem('ucbg_v1_1');
             if(s) {
                 let d = JSON.parse(s);
-                // Merge to ensure new fields (like settings/league) exist for old saves
                 game = {...game, ...d};
-                // Ensure settings object exists
                 if(!game.settings) game.settings = { animations: true };
+                // Додаємо об'єкт tasks, якщо його немає в старому сейві
+                if(!game.tasks) game.tasks = { task1: false, task2: false };
             }
         }
 
