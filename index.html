@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ukrainian Cyborgs v1.4 (Eco)</title>
+    <title>Ukrainian Cyborgs v1.5 (Real)</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        /* --- СТИЛІ ЗАЛИШЕНО БЕЗ ЗМІН (v1.1) --- */
+        /* --- СТИЛІ (v1.1 + Fixes) --- */
         :root {
             --primary: #00BFFF;
             --accent: #FFD700;
@@ -16,8 +16,8 @@
             --gold: #FFD700;
             --diamond: #b9f2ff;
             --bg-dark: #050505;
-            --card-bg: #141414;
             --danger: #ff3b30;
+            --success: #00ff88;
         }
 
         body {
@@ -30,6 +30,14 @@
             -webkit-tap-highlight-color: transparent;
             padding-bottom: 90px;
         }
+
+        /* FIX: TON CONNECT LAYER - Витягуємо QR код на самий верх */
+        #tc-widget-root, tc-root, .tc-root {
+            z-index: 10000 !important;
+            position: relative;
+        }
+        /* Робимо модалку трохи нижче, щоб TON UI був поверх */
+        .modal { z-index: 2000; } 
 
         .bg-fx {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -140,6 +148,13 @@
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(26px); }
 
+        /* Timer Box for Airdrop */
+        .airdrop-box {
+            background: rgba(0, 191, 255, 0.1); border: 1px solid var(--primary);
+            padding: 15px; border-radius: 12px; margin-top: 20px; text-align: center;
+        }
+        .timer-digits { font-size: 24px; font-weight: bold; color: var(--accent); font-family: monospace; margin-top: 5px; }
+
     </style>
 </head>
 <body>
@@ -237,8 +252,6 @@
         <div class="modal-card">
             <span class="close-btn" onclick="closeModals()">&times;</span>
             <h2>СПЕЦ ЗАВДАННЯ</h2>
-            <p style="color:#888; text-align:center; font-size:12px;">Підпишись для фінансування</p>
-            
             <div class="upg-row">
                 <div>
                     <div style="font-size:14px; font-weight:bold;">Канал UCBG</div>
@@ -246,7 +259,6 @@
                 </div>
                 <button class="btn" id="task1Btn" onclick="checkTask('task1', 'https://t.me/ucbgcoin')">Go</button>
             </div>
-
             <div class="upg-row">
                 <div>
                     <div style="font-size:14px; font-weight:bold;">Чат Кіборгів</div>
@@ -257,31 +269,10 @@
         </div>
     </div>
 
-    <div id="settingsModal" class="modal">
-        <div class="modal-card">
-            <span class="close-btn" onclick="closeModals()">&times;</span>
-            <h2>НАЛАШТУВАННЯ</h2>
-            <div class="upg-row" style="border-color:#555;">
-                <div>
-                    <div style="font-size:14px; font-weight:bold;">Анімації</div>
-                    <div style="font-size:10px; color:#888;">Ефекти натискання</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="animToggle" onchange="toggleAnim()">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div style="text-align:center; color:#555; font-size:10px; margin-top:20px;">
-                Cyborg v1.4 Eco <br> Stabilized
-            </div>
-        </div>
-    </div>
-
     <div id="friendsModal" class="modal">
         <div class="modal-card">
             <span class="close-btn" onclick="closeModals()">&times;</span>
             <h2>Бригада</h2>
-            <p style="color:#aaa; text-align:center;">Запроси бійця в команду:</p>
             <div style="background:#1a1a1a; padding:15px; border-radius:10px; margin:10px 0; border:1px solid #333;">
                 <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
                     <span>Тобі:</span> <span style="color:var(--primary); font-weight:bold;">+500,000</span>
@@ -298,32 +289,32 @@
         <div class="modal-card">
             <span class="close-btn" onclick="closeModals()">&times;</span>
             <h2>ФІНАНСИ</h2>
-            <div id="ton-btn" style="margin-bottom:20px;"></div>
+            
+            <div id="ton-btn" style="margin-bottom:20px; min-height: 50px;"></div>
             
             <hr style="border-color:#333;">
             
-            <h3 style="font-size:16px; color:var(--accent);">NFT Ваучери</h3>
+            <h3 style="font-size:16px; color:var(--accent);">Генерація NFT</h3>
             <div class="upg-row" style="border-color:var(--primary);">
                 <div>
-                    <div style="font-size:14px; font-weight:bold;">Getgems Market</div>
-                    <div style="font-size:10px; color:#888;">Купити ваучер (1М монет)</div>
+                    <div style="font-size:14px; font-weight:bold;">Конвертація (Мінт)</div>
+                    <div style="font-size:10px; color:#888;">1,000,000 Монет = 1 Voucher</div>
                 </div>
-                <button class="btn" onclick="window.open('https://getgems.io/collection/EQBiMglpS3o2nMB89NS0Wp6wgqacaOhT0QdZgQ_svTlhTdsO/EQDWHsTEXeaJEMcDfuyujSVf8VrHBlKljqKqFo1aDRDc6qvc')">BUY</button>
+                <button class="btn" id="mintBtn" onclick="mintVoucher()">СТВОРИТИ</button>
             </div>
-            <button class="btn" style="width:100%; background:#222; color:#888;" onclick="scanNFT()">🔄 Сканувати NFT</button>
-
-            <hr style="border-color:#333; margin:20px 0;">
-
-            <h3 style="font-size:16px; color:var(--primary);">Стейкінг TON</h3>
-            <div class="upg-row">
-                <div>
-                    <div style="font-size:14px;">Вклад 10 TON</div>
-                    <div style="font-size:10px; color:#0f0;">+1,000,000 / день</div>
-                </div>
-                <button class="btn" onclick="startStaking()">STAKE</button>
+            <div id="nftInventory" style="margin-top:10px; font-size:12px; color:#aaa; text-align:center;">
+                Ваші ваучери: <span id="voucherCount" style="color:#fff; font-weight:bold;">0</span>
             </div>
             
-            <p style="text-align:center; margin-top:20px; color:#555; font-size:10px;">Блокчейн операції обробляються автоматично.</p>
+            <button class="btn" style="width:100%; margin-top:10px; background:#222; border:1px solid #444;" onclick="window.open('https://getgems.io/collection/EQBiMglpS3o2nMB89NS0Wp6wgqacaOhT0QdZgQ_svTlhTdsO/EQDWHsTEXeaJEMcDfuyujSVf8VrHBlKljqKqFo1aDRDc6qvc')">
+                Перейти на Getgems
+            </button>
+
+            <div class="airdrop-box">
+                <div style="font-size:12px; color:#888;">AIRDROP COUNTDOWN</div>
+                <div id="airdropTimer" class="timer-digits">--:--:--:--</div>
+                <div style="font-size:10px; color:#555;">Target: 05.02.2026</div>
+            </div>
         </div>
     </div>
 
@@ -332,7 +323,7 @@
         const TG = window.Telegram.WebApp;
         TG.expand(); TG.setHeaderColor('#050505');
 
-        // Елементи інтерфейсу
+        // Елементи
         const elBalance = document.getElementById('displayBalance');
         const elEnergyFill = document.getElementById('energyFill');
         const elEnVal = document.getElementById('enVal');
@@ -346,7 +337,7 @@
         const elIntro = document.getElementById('intro-layer');
         const elLeague = document.getElementById('leagueDisplay');
 
-        // Економіка та Ліги
+        // Економіка
         const LEAGUES = [
             { name: "Bronze", limit: 0, reward: 0, color: "var(--bronze)" },
             { name: "Silver", limit: 50000, reward: 5000, color: "var(--silver)" },
@@ -354,17 +345,18 @@
             { name: "Diamond", limit: 10000000, reward: 100000, color: "var(--diamond)" }
         ];
 
-        // СТАН ГРИ (Додано: tasks, referral check)
+        // СТАН ГРИ
         let game = {
             balance: 0,
             energy: 1000,
             leagueIndex: 0,
+            vouchers: 0, // Зберігання NFT ваучерів
             hasPlayed: false,
             hasBot: false,
             botStartTime: 0,
             turboEnd: 0,
             clickCount: 0,
-            tasks: { task1: false, task2: false }, // Стан завдань
+            tasks: { task1: false, task2: false },
             settings: { animations: true },
             upgrades: {
                 tap: { lvl: 1, base: 500, factor: 2, val: 1 },
@@ -377,22 +369,21 @@
         function init() {
             loadGame();
 
-            // Перевірка реферала (перший запуск)
+            // Реферальна система
             const initData = TG.initDataUnsafe;
             if (!game.hasPlayed) {
                 game.balance = 5000;
-                // Якщо є start_param (реферал)
                 if(initData && initData.start_param) {
-                    game.balance += 250000; // Бонус за друга
-                    TG.showAlert("🎁 Ви отримали +250,000 монет від друга!");
+                    game.balance += 250000; 
+                    TG.showAlert("🎁 Bonus +250,000 from friend!");
                 }
                 game.hasPlayed = true;
                 saveGame();
             }
 
-            // Init Settings UI
-            document.getElementById('animToggle').checked = game.settings.animations;
-            applyAnimationsSetting();
+            // Airdrop Timer start
+            setInterval(updateAirdropTimer, 1000);
+            updateAirdropTimer();
 
             updateUI();
             checkLeague(); 
@@ -407,20 +398,19 @@
 
             setInterval(() => { game.clickCount = 0; }, 2000);
 
+            // TON Connect
             new TON_CONNECT_UI.TonConnectUI({
                 manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json',
                 buttonRootId: 'ton-btn'
             });
         }
 
-        // --- ОСНОВНА ЛОГІКА ---
+        // --- GAME LOGIC ---
 
         window.startGame = () => {
-            elIntro.style.opacity = '0';
-            setTimeout(() => elIntro.style.display = 'none', 500);
+            document.getElementById('intro-layer').style.display = 'none';
         };
 
-        // Клік
         elTapBtn.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             if(game.clickCount > 35) return; 
@@ -457,95 +447,75 @@
             setTimeout(() => el.remove(), 600);
         }
 
-        // --- ЛІГИ ---
         function checkLeague() {
-            let currentLvl = game.leagueIndex;
-            let nextLvl = currentLvl + 1;
-
-            if (nextLvl < LEAGUES.length) {
-                if (game.balance >= LEAGUES[nextLvl].limit) {
-                    game.leagueIndex = nextLvl;
-                    let reward = LEAGUES[nextLvl].reward;
-                    game.balance += reward;
-                    TG.showAlert(`🏆 Rank Up! ${LEAGUES[nextLvl].name} League\nBonus: +${reward} UCBG`);
-                    saveGame();
-                    updateUI();
-                }
+            let nextLvl = game.leagueIndex + 1;
+            if (nextLvl < LEAGUES.length && game.balance >= LEAGUES[nextLvl].limit) {
+                game.leagueIndex = nextLvl;
+                game.balance += LEAGUES[nextLvl].reward;
+                TG.showAlert(`🏆 Rank Up! ${LEAGUES[nextLvl].name}`);
+                saveGame();
+                updateUI();
             }
         }
 
-        // --- ЗАВДАННЯ (Нова логіка) ---
+        // --- TASKS ---
         window.checkTask = (taskId, url) => {
-            if(game.tasks && game.tasks[taskId]) return; // Вже виконано
-
-            // Відкриваємо лінк
+            if(game.tasks && game.tasks[taskId]) return;
             TG.openTelegramLink(url);
-            
-            // Імітуємо перевірку через 3 секунди
             setTimeout(() => {
-                TG.showConfirm("Ви підписалися на канал?", (ok) => {
+                // В реальній грі тут API запит. Зараз - чесна логіка на довірі для MVP
+                TG.showConfirm("Ви підписалися?", (ok) => {
                     if(ok) {
-                        if(!game.tasks) game.tasks = {};
                         game.tasks[taskId] = true;
                         game.balance += 1000000;
-                        TG.showAlert("✅ Завдання виконано! +1,000,000");
-                        updateTasksUI();
-                        saveGame();
-                        updateUI();
+                        updateTasksUI(); saveGame(); updateUI();
                     }
                 });
             }, 3000);
         };
 
         function updateTasksUI() {
-            if(game.tasks?.task1) {
-                document.getElementById('task1Btn').textContent = "DONE";
-                document.getElementById('task1Btn').disabled = true;
-            }
-            if(game.tasks?.task2) {
-                document.getElementById('task2Btn').textContent = "DONE";
-                document.getElementById('task2Btn').disabled = true;
-            }
+            if(game.tasks?.task1) { document.getElementById('task1Btn').textContent = "DONE"; document.getElementById('task1Btn').disabled = true; }
+            if(game.tasks?.task2) { document.getElementById('task2Btn').textContent = "DONE"; document.getElementById('task2Btn').disabled = true; }
         }
 
-        // --- NFT ТА СТЕЙКІНГ (Нова логіка) ---
-        window.scanNFT = () => {
-            // Тут буде реальний код перевірки через TON API
-            TG.showAlert("🔍 Сканування гаманця...\nNFT ваучери не знайдено.");
-        };
+        // --- REAL ECONOMY FEATURES (AIRDROP & NFT) ---
 
-        window.startStaking = () => {
-            // Тут буде смарт-контракт
-            TG.showAlert("⚙️ Стейкінг пул запускається...\nСлідкуйте за новинами в каналі.");
-        };
+        // 1. Airdrop Timer (05.02.2026)
+        function updateAirdropTimer() {
+            const target = new Date('2026-02-05T00:00:00').getTime();
+            const now = new Date().getTime();
+            const diff = target - now;
 
-        // --- НАЛАШТУВАННЯ ---
-        window.toggleAnim = () => {
-            game.settings.animations = document.getElementById('animToggle').checked;
-            applyAnimationsSetting();
-            saveGame();
-        };
-
-        function applyAnimationsSetting() {
-            if(game.settings.animations) {
-                elTapBtn.classList.add('anim-active');
-                document.querySelector('.trident-svg').classList.add('trident-anim');
+            if (diff > 0) {
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                document.getElementById('airdropTimer').innerText = `${d}d ${h}h ${m}m ${s}s`;
             } else {
-                elTapBtn.classList.remove('anim-active');
-                document.querySelector('.trident-svg').classList.remove('trident-anim');
+                document.getElementById('airdropTimer').innerText = "AIRDROP LIVE";
+                document.getElementById('airdropTimer').style.color = "#0f0";
             }
         }
 
-        // Регенерація
-        function regenEnergy() {
-            let max = game.upgrades.eng.val;
-            if (game.energy < max) {
-                game.energy = Math.min(max, game.energy + game.upgrades.reg.val);
+        // 2. Real Voucher Minting (Internal Economy)
+        window.mintVoucher = () => {
+            const price = 1000000;
+            if(game.balance >= price) {
+                game.balance -= price;
+                game.vouchers = (game.vouchers || 0) + 1;
+                
+                TG.showAlert("✅ Успішно! Ваучер створено і додано в інвентар.");
+                
                 updateUI();
+                saveGame();
+            } else {
+                TG.showAlert(`❌ Недостатньо коштів. Потрібно ${price.toLocaleString()} монет.`);
             }
-        }
+        };
 
-        // --- ПОКРАЩЕННЯ ---
+        // --- UPGRADES & BOT ---
         function renderUpgrades() {
             const list = document.getElementById('upgradesList');
             list.innerHTML = '';
@@ -554,11 +524,9 @@
                 { id: 'eng', name: "Енергія (+500)", desc: "Об'єм баку" },
                 { id: 'reg', name: "Швидкість (+2)", desc: "Відновлення" }
             ];
-
             items.forEach(i => {
                 let u = game.upgrades[i.id];
                 let cost = Math.floor(u.base * Math.pow(u.factor, u.lvl - 1));
-                
                 list.innerHTML += `
                 <div class="upg-row">
                     <div>
@@ -582,7 +550,6 @@
             }
         };
 
-        // --- СПЕЦІАЛЬНІ МОДУЛІ ---
         window.buyBot = () => {
             if(game.balance >= 50000 && !game.hasBot) {
                 game.balance -= 50000;
@@ -600,17 +567,13 @@
         };
 
         function updateBot() {
-            if(!game.hasBot) {
-                elBotPanel.style.display = 'none';
-                return;
-            }
+            if(!game.hasBot) { elBotPanel.style.display = 'none'; return; }
             elBotPanel.style.display = 'flex';
             document.getElementById('buyBotBtn').textContent = "OWNED";
             document.getElementById('buyBotBtn').disabled = true;
 
             const diff = Date.now() - game.botStartTime;
             const limit = 4 * 60 * 60 * 1000; 
-
             if(diff >= limit) {
                 elBotTimer.textContent = "READY TO CLAIM";
                 elBotTimer.style.color = "#0f0";
@@ -629,8 +592,7 @@
         window.activateRocket = () => {
             if(Date.now() < game.turboEnd) return;
             game.turboEnd = Date.now() + 10000; 
-            closeModals();
-            updateUI();
+            closeModals(); updateUI();
         };
 
         function checkTurbo() {
@@ -640,48 +602,42 @@
                 elTapBtn.style.borderColor = 'var(--danger)';
             } else {
                 elTurbo.style.display = 'none';
-                if(game.leagueIndex === 3) {
-                     elTapBtn.style.borderColor = 'var(--diamond)';
-                } else {
-                     elTapBtn.style.borderColor = '#333';
-                }
+                elTapBtn.style.borderColor = (game.leagueIndex === 3) ? 'var(--diamond)' : '#333';
+            }
+        }
+
+        function regenEnergy() {
+            let max = game.upgrades.eng.val;
+            if (game.energy < max) {
+                game.energy = Math.min(max, game.energy + game.upgrades.reg.val);
+                updateUI();
             }
         }
 
         // --- UI UPDATE ---
         function updateUI() {
             elBalance.innerText = game.balance.toLocaleString();
-            
-            // Energy
             let cur = Math.floor(game.energy);
             let max = game.upgrades.eng.val;
             elEnVal.innerText = cur;
             elEnMax.innerText = max;
             elEnergyFill.style.width = (cur / max) * 100 + "%";
-
-            if (cur < max) {
-                elRegenState.style.display = 'block';
-                elRegenState.textContent = `⚡ Charging (+${game.upgrades.reg.val}/s)`;
-            } else {
-                elRegenState.style.display = 'none';
-            }
-
-            // League Update
+            elRegenState.style.display = (cur < max) ? 'block' : 'none';
+            elRegenState.textContent = `⚡ Charging (+${game.upgrades.reg.val}/s)`;
+            
             let lInfo = LEAGUES[game.leagueIndex];
             elLeague.textContent = `${lInfo.name} League`;
             elLeague.style.color = lInfo.color;
             elLeague.style.borderColor = lInfo.color;
 
-            if(game.leagueIndex === 3) {
-                elTapBtn.classList.add('diamond-mode');
-            } else {
-                elTapBtn.classList.remove('diamond-mode');
-            }
+            // NFT Update
+            document.getElementById('voucherCount').innerText = game.vouchers || 0;
+
+            if(game.leagueIndex === 3) elTapBtn.classList.add('diamond-mode');
+            else elTapBtn.classList.remove('diamond-mode');
         }
 
-        // --- INVITE (Оновлений лінк) ---
         window.invite = () => {
-            // Формуємо лінк з ID юзера (якщо доступно)
             const userId = TG.initDataUnsafe?.user?.id || "";
             const botLink = `https://t.me/ucbgcoin_bot/Ucbgcoin?startapp=${userId}`;
             const text = "Отримай +250k монет в Ukrainian Cyborgs! 🦾🇺🇦";
@@ -692,20 +648,21 @@
         window.openModal = (id) => {
             document.getElementById(id).style.display = 'flex';
             if(id === 'upgModal') renderUpgrades();
-            if(id === 'tasksModal') updateTasksUI(); // Оновити статус завдань
+            if(id === 'tasksModal') updateTasksUI();
+            if(id === 'walletModal') updateAirdropTimer();
         };
         window.closeModals = () => document.querySelectorAll('.modal').forEach(el => el.style.display = 'none');
 
         // Save/Load
-        function saveGame() { localStorage.setItem('ucbg_v1_1', JSON.stringify(game)); }
+        function saveGame() { localStorage.setItem('ucbg_v1_5', JSON.stringify(game)); }
         function loadGame() {
-            let s = localStorage.getItem('ucbg_v1_1');
+            let s = localStorage.getItem('ucbg_v1_5');
             if(s) {
                 let d = JSON.parse(s);
                 game = {...game, ...d};
                 if(!game.settings) game.settings = { animations: true };
-                // Додаємо об'єкт tasks, якщо його немає в старому сейві
                 if(!game.tasks) game.tasks = { task1: false, task2: false };
+                if(!game.vouchers) game.vouchers = 0;
             }
         }
 
