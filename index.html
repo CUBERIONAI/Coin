@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ukrainian Cyborgs v1.6 (Staking)</title>
+    <title>Ukrainian Cyborgs v1.6.1 (Fixed)</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
@@ -323,7 +323,7 @@
                     <span class="slider"></span>
                 </label>
             </div>
-            <div style="text-align:center; color:#555; font-size:10px; margin-top:20px;">Cyborg v1.6 (Staking)</div>
+            <div style="text-align:center; color:#555; font-size:10px; margin-top:20px;">Cyborg v1.6.1 (Fixed)</div>
         </div>
     </div>
 
@@ -474,10 +474,8 @@
             
             // Yield per second = YieldDay / 86400
             let yieldPerSec = plan.yieldDay / 86400;
-            let seconds passed = (now - game.staking.lastCalc) / 1000; // Oops, variable name fix needed
             
-            // Simple approach: Add yield every second in this loop is easier for display
-            // But for precision we use delta time.
+            // --- FIX IS HERE ---
             let delta = (now - game.staking.lastCalc) / 1000;
             
             if(delta >= 1) {
@@ -486,8 +484,9 @@
                 game.staking.lastCalc = now;
                 
                 // Update UI
-                document.getElementById('stakingBalance').innerText = Math.floor(game.staking.accumulated).toLocaleString();
-                saveGame(); // Save progress
+                let el = document.getElementById('stakingBalance');
+                if(el) el.innerText = Math.floor(game.staking.accumulated).toLocaleString();
+                saveGame(); 
             }
         }
 
@@ -672,7 +671,6 @@
             }
         };
 
-        // ... Bot & Rocket logic same as before ...
         window.buyBot = () => { if(game.balance >= 50000 && !game.hasBot) { game.balance-=50000; game.hasBot=true; game.botStartTime=Date.now(); updateUI(); saveGame(); }};
         window.claimBot = () => { game.balance+=10000; game.botStartTime=Date.now(); TG.showAlert("🤖 Collected!"); updateUI(); saveGame(); };
         function updateBot() { 
@@ -707,9 +705,10 @@
         window.openModal = (id) => { document.getElementById(id).style.display = 'flex'; if(id==='upgModal') renderUpgrades(); if(id==='walletModal') {renderStaking(); updateAirdropTimer();} if(id==='friendsModal') renderFriends(); };
         window.closeModals = () => document.querySelectorAll('.modal').forEach(el => el.style.display = 'none');
 
-        function saveGame() { localStorage.setItem('ucbg_v1_6', JSON.stringify(game)); }
+        // FIXED SAVE KEY to prevent corrupted data loading
+        function saveGame() { localStorage.setItem('ucbg_v1_6_fix', JSON.stringify(game)); }
         function loadGame() {
-            let s = localStorage.getItem('ucbg_v1_6');
+            let s = localStorage.getItem('ucbg_v1_6_fix');
             if(s) { 
                 let d = JSON.parse(s); game={...game, ...d}; 
                 if(!game.settings) game.settings={animations:true};
